@@ -38,16 +38,6 @@ class Interacao(commands.Cog):
         comando_log = f"[{datetime.datetime.now()} -- {ctx.author} -- {ctx.guild} -- Canal de Texto: ({ctx.channel})]: $iroll {numero}\n"
         instanceLog.salvar_log(comando_log)
 
-    # O bot irá enviar uma mensagem chamando todos os membros do servidor
-    @commands.hybrid_command(name='todos', description='Chame todos do servidor.')
-    @commands.cooldown(1, 300, commands.BucketType.guild) # Limita o uso do comando para cada 5 min por servidor (300seg = 5min)
-    async def todos(self, ctx):
-
-        allowed_mentions = discord.AllowedMentions(everyone=True) # Permite o bot mencionar todos os membros do servidor
-        await ctx.send(content=f'**{ctx.author.mention} está chamando todos do servidor** @everyone', allowed_mentions=allowed_mentions)
-        comando_log = f"[{datetime.datetime.now()} -- {ctx.author} -- {ctx.guild} -- Canal de Texto: ({ctx.channel})]: $itodos\n"
-        instanceLog.salvar_log(comando_log)
-
     # O bot irá enviar uma dm chamando os membros do servidor para uma raid
     @commands.hybrid_command(name='dm_jogar', description='O bot enviará um convite para o membro escolhido (2 min a cada uso).')
     @commands.cooldown(1, 120, commands.BucketType.member) # Limita o uso do comando para cada 2 min por servidor (120seg = 2min)

@@ -22,26 +22,18 @@ class Eventos(commands.Cog):
         print(f'--------------------------------------------------------')
         for guild in self.bot.guilds:
             print(f'#{ordem} Servidor ({guild.name}) - ID ({guild.id})')
-            resultado = MySQLConnector.procurar_servidor_banido(MySQLConnector, guild.id)
-            if resultado:
-                await guild.leave()
-            else:
-                resultado = MySQLConnector.procurar_servidor(MySQLConnector, guild.id)
-                if resultado is None:
-                    MySQLConnector.inserir_servidor(MySQLConnector,guild.id, guild.name)
-                elif resultado[2] is not guild.name:
-                    MySQLConnector.alterar_nome_servidor(MySQLConnector,guild.id, guild.name)
-                ordem += 1
+            resultado = MySQLConnector.procurar_servidor(MySQLConnector, guild.id)
+            if resultado is None:
+                MySQLConnector.inserir_servidor(MySQLConnector,guild.id, guild.name)
+            elif resultado[2] is not guild.name:
+                MySQLConnector.alterar_nome_servidor(MySQLConnector,guild.id, guild.name)
+            ordem += 1
         print(f'--------------------------------------------------------\n')
 
     # Envia uma mensagem em um canal de texto quando o bot entrar no servidor
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
 
-        resultado = MySQLConnector.procurar_servidor_banido(MySQLConnector, guild.id)
-        if resultado:
-            await guild.leave()
-            return
         # Verifica se o servidor está na base de dados
         resultado = MySQLConnector.procurar_Servidor(MySQLConnector,guild.id)
         if resultado:
@@ -82,26 +74,21 @@ class Eventos(commands.Cog):
             canal = member.guild.get_channel(int(resultado[0]))
             await asyncio.sleep(1.5)
             await canal.send(embed=embed)
-'''
+
     @commands.Cog.listener()
     async def on_presence_update(self, before, after):
         
         if before.activity == after.activity:
             return
-        
         if type(after.activity) is discord.activity.Streaming:
-
             resultado = MySQLConnector.procurar_canal_twitch(MySQLConnector, after.guild.id)
             if resultado:
-
                 name = after.activity.name
                 game = after.activity.game
                 twitch_name = after.activity.twitch_name
                 twitch_url = after.activity.url
-                print(name)
-                print(game)
-                print(twitch_name)
-                print(twitch_url)
-'''
+                canal = before.guild.get_channel(int(resultado[0]))
+                await canal.send(f'Stream iniciada {name}, {game}, {twitch_name}, {twitch_url}')
+
 async def setup(bot):
     await bot.add_cog(Eventos(bot))

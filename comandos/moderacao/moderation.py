@@ -105,12 +105,26 @@ class Moderacao(commands.Cog):
             await asyncio.sleep(0.5)
             numero += 1
 
-    @commands.hybrid_command(name='escolher_canal_de_boas_vindas', description='(Teste) Escolha um canal de texto, que será o canal de boas-vindas.')
+    @commands.hybrid_command(name='escolher_canal_de_boas_vindas', description='Escolha um canal de texto, que será o canal de boas-vindas.')
     @commands.check_any(GuildOwner.is_guild_owner())
     async def escolher_canal(self, ctx, canal: discord.TextChannel):
 
         MySQLConnector.escolher_canal_de_boas_vindas(MySQLConnector, ctx.guild.id, canal)
         await ctx.send(f'Canal de boas-vindas escolhido', ephemeral=True)
+
+    @commands.hybrid_command(name='escolher_canal_twitch', description='(Teste) Escolha um canal de texto, que será o canal de notificações da twitch.')
+    @commands.check_any(GuildOwner.is_guild_owner())
+    async def escolher_canal(self, ctx, canal: discord.TextChannel):
+
+        MySQLConnector.escolher_canal_twitch(MySQLConnector, ctx.guild.id, canal)
+        await ctx.send(f'Canal da twitch escolhido', ephemeral=True)
+
+    @commands.hybrid_command(name='inserir_streamer', description='(Teste) Escolha o streamer que terá a live notificada')
+    @commands.check_any(GuildOwner.is_guild_owner())
+    async def escolher_canal(self, ctx, membro: discord.Member):
+
+        MySQLConnector.escolher_streamer(MySQLConnector, ctx.guild.id, membro)
+        await ctx.send(f'Streamer inserido', ephemeral=True)
 
 async def setup(bot):
     await bot.add_cog(Moderacao(bot))

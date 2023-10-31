@@ -35,12 +35,5 @@ class Exclusivo(commands.Cog):
             case _:
                 await ctx.send(f'Digite uma opção válida:\n1 - Jogando\n2 - Ouvindo\n3 - Assistindo', ephemeral=True)
 
-    @commands.hybrid_command(name='banir_servidor', description='Apenas o dono da aplicação consegue usar o comando.')
-    @commands.is_owner()
-    async def banir_servidor(self, ctx, servidor: discord.Guild):
-        
-        MySQLConnector.banir_servidor(MySQLConnector, servidor.id, servidor.name)
-        await ctx.send('Servidor banido.', ephemeral=True)
-
 async def setup(bot):
     await bot.add_cog(Exclusivo(bot))

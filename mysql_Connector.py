@@ -31,11 +31,9 @@ class MySQLConnector:
 
     def procurar_canal_twitch(self, id_server):
 
-        self.cnx._open_connection()
         consulta = 'SELECT * FROM bot_discord.canal_twitch WHERE fk_id_servidor = %s'
         self.cursor.execute(consulta, (id_server,))
         resultado = self.cursor.fetchone()
-        self.cnx.close()
         return resultado
 
     def alterar_quarentena(self, id_server, status):
@@ -77,14 +75,6 @@ class MySQLConnector:
             self.cnx.commit()
             self.cnx.close()
 
-    def banir_servidor(self, id_server, name_server):
-
-        self.cnx._open_connection()
-        inserir = 'INSERT INTO servidores_banidos VALUES(%s, %s)'
-        self.cursor.execute(inserir, (id_server, name_server, ))
-        self.cnx.commit()
-        self.cnx.close()
-
     def procurar_servidor_banido(self, id_server):
         
         self.cnx._open_connection()
@@ -108,3 +98,6 @@ class MySQLConnector:
             self.cursor.execute(inseir, (channel.id, channel.name, id_server, ))
             self.cnx.commit()
             self.cnx.close()
+
+    def escolher_streamer(self, id_server, membro):
+        ...
