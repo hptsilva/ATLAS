@@ -1,5 +1,4 @@
-create database isac;
-
+/*
 create table servidor(
 id_servidor varchar(20) primary key,
 nome varchar(45) not null,
@@ -14,29 +13,11 @@ fk_id_servidor varchar(20) unique,
 foreign key (fk_id_servidor) references servidor(id_servidor)
 );
 
-create table cargos(
-id_cargo varchar(20) primary key,
-nome varchar(45) not null,
-fk_id_servidor varchar(20),
+CREATE TABLE canal_twitch(
+id_canal_twitch varchar(20) primary key,
+nome varchar(45),
+fk_id_servidor varchar(20) unique,
 foreign key (fk_id_servidor) references servidor(id_servidor)
 );
 
-create table membros(
-id_membro varchar(20) primary key,
-nome varchar(45) not null
-);
-
-create table funcao(
-fk_id_membro varchar(20),
-fk_id_cargo varchar(20),
-foreign key (fk_id_membro) references membros(id_membro),
-foreign key (fk_id_cargo) references cargos(id_cargo)
-);
-
-create table comunidade(
-fk_id_servidor varchar(20),
-fk_id_membro varchar(20),
-foreign key (fk_id_servidor) references servidor(id_servidor),
-foreign key (fk_id_membro) references membros(id_membro)
-);
-
+*/
