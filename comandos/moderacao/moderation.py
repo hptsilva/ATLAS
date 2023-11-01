@@ -123,8 +123,8 @@ class Moderacao(commands.Cog):
     @commands.check_any(GuildOwner.is_guild_owner())
     async def escolher_canal(self, ctx, membro: discord.Member):
 
-        MySQLConnector.escolher_streamer(MySQLConnector, ctx.guild.id, membro)
-        await ctx.send(f'Streamer inserido', ephemeral=True)
+        funcao = MySQLConnector.inserir_streamer(MySQLConnector, ctx.guild.id, membro)
+        await ctx.send(f'**{funcao}**', ephemeral=True)
 
 async def setup(bot):
     await bot.add_cog(Moderacao(bot))

@@ -81,14 +81,17 @@ class Eventos(commands.Cog):
         if before.activity == after.activity:
             return
         if type(after.activity) is discord.activity.Streaming:
-            resultado = MySQLConnector.procurar_canal_twitch(MySQLConnector, after.guild.id)
+            resultado = MySQLConnector.procurar_streamer(MySQLConnector, after.guild.id, after.id)
             if resultado:
-                name = after.activity.name
-                game = after.activity.game
-                twitch_name = after.activity.twitch_name
-                twitch_url = after.activity.url
-                canal = before.guild.get_channel(int(resultado[0]))
-                await canal.send(f'Stream iniciada {name}, {game}, {twitch_name}, {twitch_url}')
+                resultado = MySQLConnector.procurar_canal_twitch(MySQLConnector, after.guild.id)
+                if resultado:
+                    twitch_name = after.activity.twitch_name
+                    twitch_url = after.activity.url
+                    canal = before.guild.get_channel(int(resultado[0]))
+                    embed = discord.Embed(title=f':rotating_light: Stream de {twitch_name} iniciada :rotating_light:',
+                                          description=f'{twitch_url}',
+                                          color=0x1948bf)
+                    # await canal.send(embed=embed)
 
 async def setup(bot):
     await bot.add_cog(Eventos(bot))

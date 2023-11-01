@@ -99,5 +99,40 @@ class MySQLConnector:
             self.cnx.commit()
             self.cnx.close()
 
-    def escolher_streamer(self, id_server, membro):
-        ...
+    def inserir_streamer(self, id_server, membro):
+
+        self.cnx._open_connection()
+        consulta = 'SELECT * FROM bot_discord.streamers WHERE id_streamer = %s'
+        self.cursor.execute(consulta, (membro.id,))
+        resultado = self.cursor.fetchone()
+        if resultado:
+            consulta = 'SELECT * FROM bot_discord.servidor_streamers WHERE fk_id_streamer = %s AND fk_id_servidor = %s'
+            self.cursor.execute(consulta, (membro.id, id_server, ))
+            resultado = self.cursor.fetchone()
+            if resultado:
+                self.cnx.close()
+                return 'Usuário escolhido já está registrado.'
+            else:
+                inserir = 'INSERT INTO servidor_streamers VALUES(%s, %s)'
+                self.cursor.execute(inserir, (membro.id, id_server, ))
+                self.cnx.commit()
+                self.cnx.close
+                return 'Usuário escolhido foi registrado.'
+        else:
+            inserir = 'INSERT INTO streamers VALUES(%s, %s)'
+            self.cursor.execute(inserir, (membro.id, membro.name, ))
+            self.cnx.commit()
+            inserir = 'INSERT INTO servidor_streamers VALUES(%s, %s)'
+            self.cursor.execute(inserir, (membro.id, id_server, ))
+            self.cnx.commit()
+            self.cnx.close
+            return 'Usuário escolhido foi registrado.'
+        
+    def procurar_streamer(self, id_server, id_member):
+
+        self.cnx._open_connection()
+        consulta = 'SELECT * FROM bot_discord.servidor_streamers WHERE fk_id_streamer = %s AND fk_id_servidor = %s'
+        self.cursor.execute(consulta, (id_member, id_server, ))
+        resultado = self.cursor.fetchone()
+        self.cnx.close()
+        return resultado
