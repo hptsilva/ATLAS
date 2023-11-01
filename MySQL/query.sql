@@ -1,4 +1,3 @@
-/*
 create database bot_discord;
 
 create table servidor(
@@ -34,4 +33,3 @@ nome varchar(45) not null,
 fk_id_servidor varchar(20),
 foreign key (fk_id_servidor) references servidor(id_servidor)
 );
-*/
