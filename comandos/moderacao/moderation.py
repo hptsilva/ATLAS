@@ -89,14 +89,14 @@ class Moderacao(commands.Cog):
             texto += await ctx.send(f'Nome: {entry.user}. Motivo: {entry.reason}')
 
     # Apague um número determinado de mensagens
-    @commands.hybrid_command(name='apagar', description='(Teste) Apague mensagens - Apenas administradores usam o comando.')
+    @commands.hybrid_command(name='apagar', description='Apague mensagens - Apenas administradores usam o comando.')
     @commands.has_permissions(administrator=True)
     async def apagar(self, ctx, valor: int):
 
         if valor < 0:
             await ctx.send('Envie um valor positivo', ephemeral=True)
             return
-        await ctx.send(f'Deletando mensagens...\n**Obs: Por motivos de sobrecarga, as mensagens serão apagadas uma a uma a cada 500 milissegundos**', ephemeral=True)
+        await ctx.send(f'Deletando mensagens...', ephemeral=True)
         numero = 1
         while numero <= valor:
             mensagem = await ctx.channel.purge(limit=1)
@@ -107,24 +107,42 @@ class Moderacao(commands.Cog):
 
     @commands.hybrid_command(name='escolher_canal_de_boas_vindas', description='Escolha um canal de texto, que será o canal de boas-vindas.')
     @commands.check_any(GuildOwner.is_guild_owner())
-    async def escolher_canal(self, ctx, canal: discord.TextChannel):
+    async def escolher_canal_boas_vindas(self, ctx, canal: discord.TextChannel):
 
         MySQLConnector.escolher_canal_de_boas_vindas(MySQLConnector, ctx.guild.id, canal)
         await ctx.send(f'Canal de boas-vindas escolhido', ephemeral=True)
 
     @commands.hybrid_command(name='escolher_canal_twitch', description='(Teste) Escolha um canal de texto, que será o canal de notificações da twitch.')
     @commands.check_any(GuildOwner.is_guild_owner())
-    async def escolher_canal(self, ctx, canal: discord.TextChannel):
+    async def escolher_canal_twitch(self, ctx, canal: discord.TextChannel):
 
         MySQLConnector.escolher_canal_twitch(MySQLConnector, ctx.guild.id, canal)
         await ctx.send(f'Canal da twitch escolhido', ephemeral=True)
 
     @commands.hybrid_command(name='inserir_streamer', description='(Teste) Escolha o streamer que terá a live notificada')
     @commands.check_any(GuildOwner.is_guild_owner())
-    async def escolher_canal(self, ctx, membro: discord.Member):
+    async def inserir_streamer(self, ctx, membro: discord.Member):
 
-        funcao = MySQLConnector.inserir_streamer(MySQLConnector, ctx.guild.id, membro)
-        await ctx.send(f'**{funcao}**', ephemeral=True)
+        retorno = MySQLConnector.inserir_streamer(MySQLConnector, ctx.guild.id, membro)
+        await ctx.send(f'**{retorno}**', ephemeral=True)
+
+    @commands.hybrid_command(name='excluir_streamer', description='(Teste) Exclua o streamer da lista de notificações de lives')
+    @commands.check_any(GuildOwner.is_guild_owner())
+    async def excluir_streamer(self, ctx, membro:discord.Member):
+        
+        retorno = MySQLConnector.excluir_streamer(MySQLConnector, ctx.guild.id, membro)
+        await ctx.send(f'**{retorno}**', ephemeral=True)
+
+    @commands.hybrid_command(name='listar_streamers', description='(Teste) Lista os streamers que terão as lives notificadas no servidor')
+    @commands. check_any(GuildOwner.is_guild_owner())
+    async def listar_streamers(self, ctx):
+
+        retorno = MySQLConnector.listar_streamers(MySQLConnector, ctx.guild.id)
+        lista = 'Nome dos streamers:\n'
+        for membro in retorno:
+            nome = ctx.guild.get_member(int(membro[1]))
+            lista = lista + str(nome) + '\n'
+        await ctx.send(f'{lista}', ephemeral=True)
 
 async def setup(bot):
     await bot.add_cog(Moderacao(bot))

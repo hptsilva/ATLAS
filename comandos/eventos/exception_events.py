@@ -27,6 +27,7 @@ class Exception_events(commands.Cog):
             await ctx.send(self.error_messages_ext[error_type], ephemeral=True)
         else:
             await ctx.send('Ocorreu um erro. Informe o dono da aplicação.', ephemeral=True)
+            print(error)
 
 async def setup(bot):
     await bot.add_cog(Exception_events(bot))

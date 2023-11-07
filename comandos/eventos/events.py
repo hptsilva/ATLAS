@@ -1,10 +1,11 @@
 import discord
 import asyncio
+import re
 from discord.ext import commands
 from mysql_Connector import MySQLConnector
+from reacoes import Reacoes_Enquete
 
 class Eventos(commands.Cog):
-
     def __init__(self, bot):
         self.bot = bot
 
@@ -13,10 +14,10 @@ class Eventos(commands.Cog):
     async def on_ready(self):
 
         await self.bot.tree.sync(guild = None)
-        # Altera a atividade do bot
-        await self.bot.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name='Starfield'))
         print(f'\nBot ({self.bot.user}) iniciado - (ID: {self.bot.user.id})')
         ordem = 1
+        # Alterar a atividade do bot
+        await self.bot.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name='Tom Clancy\'s The Division 2'))
         # Lista os nomes e IDs do servidores que o Bot é membro e atualiza o banco de dados caso o nome do servidor foi alterado
         print(f'Número de servidores: {len(self.bot.guilds)}\n')
         print(f'--------------------------------------------------------')
@@ -50,7 +51,7 @@ class Eventos(commands.Cog):
         name_server = after.name
         if (name_server is not before.name):
             # altera o dado name_server caso o nome do servidor mude
-            MySQLConnector.alterar_nome_servidor(MySQLConnector,before.id, name_server)
+            MySQLConnector.alterar_nome_Servidor(MySQLConnector,before.id, name_server)
 
     # Evento ativado quando um usuário entrar no servidor
     @commands.Cog.listener()
@@ -66,9 +67,9 @@ class Eventos(commands.Cog):
             avatar_url = member.avatar.url if member.avatar else member.default_avatar.url
             nome = member.name
             embed = discord.Embed(
-                title = f':rotating_light: Seja bem-vindo :rotating_light:',
+                title = f':rotating_light: Bem-vindo agente :rotating_light:',
                 description = f'{nome} entrou no servidor!',
-                color = 0x1948bf
+                color = 0xf24f00
             )
             embed.set_thumbnail(url=avatar_url)
             canal = member.guild.get_channel(int(resultado[0]))
@@ -77,7 +78,7 @@ class Eventos(commands.Cog):
 
     @commands.Cog.listener()
     async def on_presence_update(self, before, after):
-        
+
         if before.activity == after.activity:
             return
         if type(after.activity) is discord.activity.Streaming:
@@ -90,8 +91,44 @@ class Eventos(commands.Cog):
                     canal = before.guild.get_channel(int(resultado[0]))
                     embed = discord.Embed(title=f':rotating_light: Stream de {twitch_name} iniciada :rotating_light:',
                                           description=f'{twitch_url}',
-                                          color=0x1948bf)
+                                          color=0xf24f00)
                     # await canal.send(embed=embed)
+
+    @commands.Cog.listener()
+    async def on_reaction_add(self, reaction, user):
+        
+        if user.id == 1136689149601124383:
+            return
+        else:
+            resultado = MySQLConnector.pesquisar_enquete(MySQLConnector, user.guild.id, reaction.message.id)
+            if resultado:
+                if reaction.emoji == '✅':          
+                    embed = Reacoes_Enquete.reacoes(Reacoes_Enquete, reaction, user, 1, 'add')
+                    await reaction.message.edit(embed=embed)
+                elif reaction.emoji == '❌':
+                    embed = Reacoes_Enquete.reacoes(Reacoes_Enquete, reaction, user, 2, 'add')
+                    await reaction.message.edit(embed=embed)
+                elif reaction.emoji == '⚠️':
+                    embed = Reacoes_Enquete.reacoes(Reacoes_Enquete, reaction, user, 3, 'add')
+                    await reaction.message.edit(embed=embed)
+
+    @commands.Cog.listener()
+    async def on_reaction_remove(self, reaction, user):
+
+        if user.id == 1136689149601124383:
+            return
+        else:
+            resultado = MySQLConnector.pesquisar_enquete(MySQLConnector, user.guild.id, reaction.message.id)
+            if resultado:
+                if reaction.emoji == '✅':          
+                    embed = Reacoes_Enquete.reacoes(Reacoes_Enquete, reaction, user, 1, 'remove')
+                    await reaction.message.edit(embed=embed)
+                elif reaction.emoji == '❌':
+                    embed = Reacoes_Enquete.reacoes(Reacoes_Enquete, reaction, user, 2, 'remove')
+                    await reaction.message.edit(embed=embed)
+                elif reaction.emoji == '⚠️':
+                    embed = Reacoes_Enquete.reacoes(Reacoes_Enquete, reaction, user, 3, 'remove')
+                    await reaction.message.edit(embed=embed)
 
 async def setup(bot):
     await bot.add_cog(Eventos(bot))

@@ -16,7 +16,7 @@ class MySQLConnector:
     def procurar_servidor(self, id_server):
 
         self.cnx._open_connection()
-        consulta = 'SELECT * FROM bot_discord.servidor WHERE id_servidor = %s'
+        consulta = 'SELECT * FROM isac.servidor WHERE id_servidor = %s'
         self.cursor.execute(consulta, (id_server,))
         resultado = self.cursor.fetchone()
         self.cnx.close()
@@ -24,14 +24,16 @@ class MySQLConnector:
 
     def procurar_canal_boas_vindas(self, id_server):
 
-        consulta = 'SELECT * FROM bot_discord.canal_de_boas_vindas WHERE fk_id_servidor = %s'
+        self.cnx._open_connection()
+        consulta = 'SELECT * FROM isac.canal_de_boas_vindas WHERE fk_id_servidor = %s'
         self.cursor.execute(consulta, (id_server,))
         resultado = self.cursor.fetchone()
+        self.cnx.close()
         return resultado
 
     def procurar_canal_twitch(self, id_server):
 
-        consulta = 'SELECT * FROM bot_discord.canal_twitch WHERE fk_id_servidor = %s'
+        consulta = 'SELECT * FROM isac.canal_twitch WHERE fk_id_servidor = %s'
         self.cursor.execute(consulta, (id_server,))
         resultado = self.cursor.fetchone()
         return resultado
@@ -78,7 +80,7 @@ class MySQLConnector:
     def procurar_servidor_banido(self, id_server):
         
         self.cnx._open_connection()
-        procurar = 'SELECT * FROM bot_discord.servidores_banidos WHERE id_servidor = %s'
+        procurar = 'SELECT * FROM isac.servidores_banidos WHERE id_servidor = %s'
         self.cursor.execute(procurar, (id_server, ))
         resultado = self.cursor.fetchone()
         self.cnx.close()
@@ -102,11 +104,11 @@ class MySQLConnector:
     def inserir_streamer(self, id_server, membro):
 
         self.cnx._open_connection()
-        consulta = 'SELECT * FROM bot_discord.streamers WHERE id_streamer = %s'
+        consulta = 'SELECT * FROM isac.streamers WHERE id_streamer = %s'
         self.cursor.execute(consulta, (membro.id,))
         resultado = self.cursor.fetchone()
         if resultado:
-            consulta = 'SELECT * FROM bot_discord.servidor_streamers WHERE fk_id_streamer = %s AND fk_id_servidor = %s'
+            consulta = 'SELECT * FROM isac.servidor_streamers WHERE fk_id_streamer = %s AND fk_id_servidor = %s'
             self.cursor.execute(consulta, (membro.id, id_server, ))
             resultado = self.cursor.fetchone()
             if resultado:
@@ -131,8 +133,43 @@ class MySQLConnector:
     def procurar_streamer(self, id_server, id_member):
 
         self.cnx._open_connection()
-        consulta = 'SELECT * FROM bot_discord.servidor_streamers WHERE fk_id_streamer = %s AND fk_id_servidor = %s'
+        consulta = 'SELECT * FROM isac.servidor_streamers WHERE fk_id_streamer = %s AND fk_id_servidor = %s'
         self.cursor.execute(consulta, (id_member, id_server, ))
+        resultado = self.cursor.fetchone()
+        self.cnx.close()
+        return resultado
+    
+    def excluir_streamer(self, id_server, id_member):
+
+        self.cnx._open_connection()
+        excluir = 'DELETE * FROM isac.servidor_streamers WHERE fk_id_streamer = %s AND fk_id_servidor = %s'
+        self.cursor.execute(excluir, (id_member, id_server, ))
+        self.cnx.commit()
+        self.cnx.close()
+        return 'Streamer excluído da lista'
+    
+    def listar_streamers(self, id_server):
+
+        self.cnx._open_connection()
+        consulta = 'SELECT * FROM isac.servidor_streamers WHERE fk_id_servidor = %s'
+        self.cursor.execute(consulta, (id_server, ))
+        resultado = self.cursor.fetchall()
+        self.cnx.close()
+        return resultado
+
+    def inserir_enquete(self, id_server, id_enquete):
+        
+        self.cnx._open_connection()
+        inserir = 'INSERT INTO enquetes VALUES(%s, %s)'
+        self.cursor.execute(inserir, (id_enquete, id_server, ))
+        self.cnx.commit()
+        self.cnx.close()
+
+    def pesquisar_enquete(self, id_server, id_enquete):
+
+        self.cnx._open_connection()
+        consulta = 'SELECT * FROM isac.enquetes WHERE id_enquete = %s AND fk_id_servidor = %s'
+        self.cursor.execute(consulta, (id_enquete, id_server, ))
         resultado = self.cursor.fetchone()
         self.cnx.close()
         return resultado
