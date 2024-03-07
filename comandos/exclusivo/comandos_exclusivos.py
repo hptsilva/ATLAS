@@ -1,7 +1,6 @@
 import discord
-import asyncio
 from discord.ext import commands
-from mysql_Connector import MySQLConnector
+from discord import app_commands
 
 class Exclusivo(commands.Cog):
 
@@ -25,15 +24,23 @@ class Exclusivo(commands.Cog):
         match op:
             case 1:
                 await self.bot.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name=frase))
-                await ctx.send('Presença alterada', ephemeral=True)
+                await ctx.send('Presença alterada.', ephemeral=True)
             case 2:
                 await self.bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=frase))
-                await ctx.send('Presença alterada', ephemeral=True)
+                await ctx.send('Presença alterada.', ephemeral=True)
             case 3:
                 await self.bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=frase))
-                await ctx.send('Presença alterada', ephemeral=True)
+                await ctx.send('Presença alterada.', ephemeral=True)
             case _:
                 await ctx.send(f'Digite uma opção válida:\n1 - Jogando\n2 - Ouvindo\n3 - Assistindo', ephemeral=True)
+
+    # Limpar presença do bot.
+    @commands.hybrid_command(name = 'limpar_presença', description='Apenas o dono da aplicação consegue usar o comando.')
+    @commands.is_owner()
+    async def limparPresenca(self, ctx):
+
+        await self.bot.change_presence(activity=None)
+        await ctx.send('Presença alterada.', ephemeral=True)
 
 async def setup(bot):
     await bot.add_cog(Exclusivo(bot))

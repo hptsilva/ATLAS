@@ -1,9 +1,9 @@
 import pytz
 from datetime import datetime, timedelta
 
-class Fuso_Horario():
+class Fuso_Horario:
 
-    def fuso_horario(self, valor, data, horario):
+    async def fuso_horario(self, valor, data, horario):
 
         fuso_dict ={1 : 'America/Sao_Paulo',
                     2 : 'America/Noronha',
@@ -26,5 +26,7 @@ class Fuso_Horario():
         fuso_horario = fuso_dict[valor]
         fuso = pytz.timezone(fuso_horario)
         start_time = fuso.localize(data_hora_ingenua)
-        end_time = start_time + timedelta(hours=1)
-        return start_time, end_time
+        end_time = start_time + timedelta(hours=2)
+        now_time = datetime.now()
+        return start_time, end_time, now_time
+
