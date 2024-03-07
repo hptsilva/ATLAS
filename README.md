@@ -18,7 +18,7 @@ Bot em desenvolvimento para fins de aprendizagem. Utilize a API Wrapper em Pytho
 ```
 # Comandos:
 
-* Lista de comandos:  
+* Lista completa de comandos do bot:  
 ![comandos](https://github.com/hptsilva/ATLAS-DISCORD-BOT/assets/41704578/76772734-ffeb-4062-aced-65be2063c141)
 
 * /avatar  
