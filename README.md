@@ -27,7 +27,7 @@ Bot em desenvolvimento para fins de aprendizagem. Utilize a API Wrapper em Pytho
 * /evento  
 ![evento](https://github.com/user-attachments/assets/a0646983-12e9-49b3-9c7e-96d5288fc639)
 * (Modelo da mensagem para um evento)  
-![evento](https://github.com/hptsilva/ATLAS-DISCORD-BOT/assets/41704578/f566a68e-e943-454e-aae8-5bb2b6cfa256)
+![evento](https://github.com/user-attachments/assets/9ec40bf3-c5cb-4d90-9471-a2189630007f)
 * (Janela para editar a mensagem)  
 ![editar_evento](https://github.com/hptsilva/ATLAS-DISCORD-BOT/assets/41704578/adfd3374-0de7-4d58-a921-bab236531a2b)
 * Mensagem de boas-vindas  
