@@ -1,4 +1,4 @@
-Bot em desenvolvimento para fins de aprendizagem. Utilize a API Wrapper em Python conforme o reposítorio https://github.com/Rapptz/discord.py. A documentação está presente no link: https://discordpy.readthedocs.io/en/latest/index.html
+Bot para o aplicativo Discord. Utilize a API Wrapper em Python conforme o reposítorio https://github.com/Rapptz/discord.py. A documentação está presente no link: https://discordpy.readthedocs.io/en/latest/index.html
 * Utiliza a sistema de gerenciamento de banco de dados MySQL.
 * Para executar o programa é preciso criar as variaveis de ambiente usando a biblioteca Python Decouple.
 * Para obter o token da aplicação é necessário gerá-lo no site https://discord.com/developers/applications.
