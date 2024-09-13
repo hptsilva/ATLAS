@@ -31,4 +31,5 @@ Bot em desenvolvimento para fins de aprendizagem. Utilize a API Wrapper em Pytho
 * (Janela para editar a mensagem)  
 ![editar_evento](https://github.com/hptsilva/ATLAS-DISCORD-BOT/assets/41704578/adfd3374-0de7-4d58-a921-bab236531a2b)
 * Mensagem de boas-vindas  
-![boas_vindas](https://github.com/hptsilva/ATLAS-DISCORD-BOT/assets/41704578/173e251e-dd76-4d71-9380-2355f2227d8b)
+![boas vindas](https://github.com/user-attachments/assets/7e5db295-7013-4731-afe4-99db37baec08)
+
