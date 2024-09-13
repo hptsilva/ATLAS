@@ -21,8 +21,6 @@ Bot em desenvolvimento para fins de aprendizagem. Utilize a API Wrapper em Pytho
 
 * Lista completa de comandos do bot:  
 ![comandos](https://github.com/user-attachments/assets/ae5bbc6c-ef94-4e2e-9157-ff4462e5b687)
-Type $ihelp command for more info on a command.
-You can also type $ihelp category for more info on a category.
 * /avatar  
 ![avatar](https://github.com/hptsilva/ATLAS-DISCORD-BOT/assets/41704578/cdc2f988-8361-4b1f-98b8-6314ca9acb9c)
 * /evento  
