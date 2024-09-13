@@ -1,6 +1,0 @@
-
-[2024-09-09 00:44:08.444837 -- ATLAS]: Erro: Hybrid command raised an error: Command 'timezones' raised an exception: TypeError: Embed.add_field() missing 1 required keyword-only argument: 'name'
-[2024-09-09 00:46:24.412902 -- ATLAS]: Erro: Hybrid command raised an error: Command 'timezones' raised an exception: TypeError: Embed.__init__() got an unexpected keyword argument 'name'
-[2024-09-10 13:53:27.072174 -- Servidor de Teste]: Erro: Hybrid command raised an error: Command 'aviso' raised an exception: TypeError: object Guild can't be used in 'await' expression
-[2024-09-10 14:00:33.523422 -- Servidor de Teste]: Erro: Hybrid command raised an error: Command 'aviso' raised an exception: NameError: name 'bot' is not defined
-[2024-09-10 15:30:22.388659 -- Servidor de Teste]: Erro: Hybrid command raised an error: Command 'aviso' raised an exception: AttributeError: 'Embed' object has no attribute 'set_foot'
