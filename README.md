@@ -20,7 +20,7 @@
 # Comandos:
 
 * Lista completa de comandos do bot:  
-![comandos](https://github.com/user-attachments/assets/ae5bbc6c-ef94-4e2e-9157-ff4462e5b687)
+![comandos](https://github.com/user-attachments/assets/caa44c05-7e08-4628-889a-09872d9e5376)
 * /avatar  
 ![avatar](https://github.com/hptsilva/ATLAS-DISCORD-BOT/assets/41704578/cdc2f988-8361-4b1f-98b8-6314ca9acb9c)
 * /evento  
