@@ -1,10 +1,6 @@
-import datetime
 from discord.ext import commands
 from discord import RateLimited, NotFound
-from discord.ext.commands.errors import MissingPermissions, CommandNotFound, MissingRequiredArgument, CommandOnCooldown, NotOwner, BotMissingPermissions, CheckAnyFailure, MissingPermissions, NoPrivateMessage, PrivateMessageOnly
-from error_logs import Error_Logs
-
-instanceLog = Error_Logs
+from discord.ext.commands.errors import MissingPermissions, CommandNotFound, MissingRequiredArgument, CommandOnCooldown, NotOwner, BotMissingPermissions, CheckAnyFailure, MissingPermissions, NoPrivateMessage, PrivateMessageOnly, CommandInvokeError, UserInputError, MaxConcurrencyReached
 
 class Exception_events(commands.Cog):
     def __init__(self, bot):
@@ -21,7 +17,10 @@ class Exception_events(commands.Cog):
         NotFound: '**Erro 404. Aguarde alguns segundos. Se o problema persistir informe o dono da aplicação.**',
         RateLimited: '**Aguarde alguns segundos para requisição.**',
         NoPrivateMessage: '**Comando usado apenas em mensagens privadas.**',
-        PrivateMessageOnly: '**Comando usado apenas em mensagens privadas.**'
+        PrivateMessageOnly: '**Comando usado apenas em mensagens privadas.**',
+        CommandInvokeError: '**Erro interno**',
+        UserInputError: '**Houve algum erro relacionado a entrada de dados**',
+        MaxConcurrencyReached: '**Limite de invocações simultâneas atingida**'
     }
 
     # Evento ativado quando ocorre uma exceção.
@@ -31,12 +30,8 @@ class Exception_events(commands.Cog):
         error_type = type(error)
         if error_type in self.error_messages_ext:
             await ctx.send(self.error_messages_ext[error_type], ephemeral=True)
-            comando_log = f"[{datetime.datetime.now()} -- {ctx.guild}]: Erro: {error}\n"
-            instanceLog.salvar_log(comando_log)
         else:
             await ctx.send('**Erro interno.**', ephemeral=True)
-            comando_log = f"[{datetime.datetime.now()} -- {ctx.guild}]: Erro: {error}\n"
-            instanceLog.salvar_log(comando_log)
 
 async def setup(bot):
     await bot.add_cog(Exception_events(bot))
