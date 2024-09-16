@@ -83,6 +83,58 @@ class MySQLConnector:
         self.cnx.close()
         return resultado
 
+    async def inserir_enquete(self, id_server, id_enquete, start_time, end_time, status):
+
+        self.cnx._open_connection()
+        inserir = 'INSERT INTO enquetes VALUES(%s, %s, %s, %s, %s)'
+        self.cursor.execute(inserir, (id_enquete, id_server, start_time, end_time, status, ))
+        self.cnx.commit()
+        self.cnx.close()
+
+    async def pesquisar_enquete(self, id_server, id_enquete):
+
+        self.cnx._open_connection()
+        consulta = f'SELECT * FROM {self.DB_DATABASE}.enquetes WHERE id = %s AND fk_id_servidor = %s'
+        self.cursor.execute(consulta, (id_enquete, id_server, ))
+        resultado = self.cursor.fetchone()
+        self.cnx.close()
+        return resultado
+
+    async def inserir_evento(self, id_evento, id_servidor, id_criador):
+
+        self.cnx._open_connection()
+        id_registro = uuid.uuid4()
+        inserir = 'INSERT INTO eventos VALUES(%s, %s, %s, %s, %s)'
+        self.cursor.execute(inserir, (str(id_registro), id_evento, id_servidor, id_criador, None, ))
+        self.cnx.commit()
+        self.cnx.close()
+        return id_registro
+
+    async def pesquisar_evento(self, id_evento, id_criador, id_servidor):
+
+        self.cnx._open_connection()
+        pesquisar = 'SELECT * FROM eventos WHERE id = %s AND id_criador = %s AND fk_id_servidor = %s'
+        self.cursor.execute(pesquisar, (id_evento, id_criador, id_servidor))
+        resultado = self.cursor.fetchone()
+        self.cnx.close()
+        return resultado
+
+    async def cancelar_evento(self, id_evento):
+
+        self.cnx._open_connection()
+        deletar = 'DELETE FROM eventos WHERE id_evento = %s'
+        self.cursor.execute(deletar, (id_evento, ))
+        self.cnx.commit()
+        self.cnx.close()
+
+    async def inserir_dm_evento(self, id_dm, uuid):
+
+        self.cnx._open_connection()
+        inserir = 'UPDATE eventos SET id_dm_mensagem = %s WHERE id = %s'
+        self.cursor.execute(inserir, (id_dm, str(uuid), ))
+        self.cnx.commit()
+        self.cnx.close()
+
     async def pesquisar_cargo(self, id_servidor):
 
         self.cnx._open_connection()

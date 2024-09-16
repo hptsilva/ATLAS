@@ -22,7 +22,7 @@ async def load_extensions(self):
 asyncio.run(load_extensions(bot))
 
 # Carrega o comando para criação de evento. Apenas pode ser utilizado dentro de um servidor.
-@bot.tree.command(name='evento', description='Crie um evento no servidor.')
+@bot.tree.command(name='evento1', description='#1 Evento - Crie um evento no servidor.')
 @commands.guild_only()
 async def enquete(interaction: discord.Interaction):
 

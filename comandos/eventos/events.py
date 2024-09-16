@@ -96,7 +96,8 @@ class Eventos(commands.Cog):
                 description = f'Regras:\n\n- Seja respeitoso com todos os membros do servidor.\n- Utilize os canais de texto da maneira correta. Veja a descrição de cada canal.\n- Sem mensagens de spam e phishing.\n\n **Não seguir qualquer uma das regras anteriores é passível de banimento.**\n\n**Obs:** Para criar convites no servidor, use o comando /criar_convite.',
                 color = COLOR
             )
-            embed.set_thumbnail(url=member.guild.icon.url)
+            if (member.guild.icon is not None):
+                embed.set_thumbnail(url=member.guild.icon.url)
             try:
                 await member.send(embed=embed)
             except:

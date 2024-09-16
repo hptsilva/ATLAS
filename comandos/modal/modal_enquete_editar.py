@@ -61,20 +61,21 @@ class Modal_Enquete_Editar(discord.ui.Modal, title = 'Editar Evento'):
             padra_data = r'^(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]) (202[0-9])-(0[0-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])$'
             corresponde_data = re.match(padra_data, self.data_horario.value)
             if corresponde_data:
-                Fuso_Horario = timezone.Fuso_Horario()
-                horario = self.data_horario.value[:5]
-                data = self.data_horario.value[6:]
                 try:
+                    Fuso_Horario = timezone.Fuso_Horario()
+                    horario = self.data_horario.value[:5]
+                    data = self.data_horario.value[6:]
                     start_time, end_time, now_time = await Fuso_Horario.fuso_horario(int(self.fuso_horario.value), data, horario)
+                    segundos_depois = start_time.timestamp()
+                    segundos_agora = now_time.timestamp()
+                    if (segundos_depois - segundos_agora) > 0:
+                        embed.timestamp = start_time
+                    else:
+                        await interaction.response.send_message('Não é possível criar um evento com data e hora no passado.', ephemeral=True)
+                        return
                 except Exception:
                     await interaction.response.send_message(f'Zona de tempo inválida.', ephemeral=True)
                     return
-                segundos_depois = start_time.timestamp()
-                segundos_agora = now_time.timestamp()
-                if (segundos_depois - segundos_agora) < 0:
-                    await interaction.response.send_message('Não é possível criar um evento com data e hora no passado.', ephemeral=True)
-                    return
-                embed.timestamp = start_time    
             else:
                 await interaction.response.send_message('A data não está no formato correto (hh:mm aaaa-mm-dd) ou não é válida.', ephemeral=True)
                 return
@@ -94,4 +95,7 @@ class Modal_Enquete_Editar(discord.ui.Modal, title = 'Editar Evento'):
             embed.set_image(url=f'{url_image}')
         footer = embed_antigo.footer.text
         embed.set_footer(text=f'{footer}')
-        await interaction.response.edit_message(embed=embed)
+        try:
+            await interaction.response.edit_message(embed=embed)
+        except:
+            await interaction.response.send_message('Não foi possível alterar o evento.', ephemeral=True)

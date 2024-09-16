@@ -45,18 +45,20 @@ class Modal_Enquete(discord.ui.Modal, title='Criar Evento'):
         padra_data = r'^(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]) (202[0-9])-(0[0-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])$'
         corresponde_data = re.match(padra_data, data_horario)
         if corresponde_data:
-            Fuso_Horario = timezone.Fuso_Horario()
-            horario = data_horario[:5]
-            data = data_horario[6:]
             try:
+                Fuso_Horario = timezone.Fuso_Horario()
+                horario = data_horario[:5]
+                data = data_horario[6:]
                 start_time, end_time, now_time = await Fuso_Horario.fuso_horario(int(fuso_horario), data, horario)
+                segundos_depois = start_time.timestamp()
+                segundos_agora = now_time.timestamp()
+                if (segundos_depois - segundos_agora) > 0:
+                    pass
+                else:
+                    await interaction.response.send_message('Não é possível criar um evento com data e hora no passado.', ephemeral=True)
+                    return
             except Exception:
                 await interaction.response.send_message(f'Zona de tempo inválida.', ephemeral=True)
-                return
-            segundos_depois = start_time.timestamp()
-            segundos_agora = now_time.timestamp()
-            if (segundos_depois - segundos_agora) < 0:
-                await interaction.response.send_message('Não é possível criar um evento com data e hora no passado.', ephemeral=True)
                 return
             if descricao == '':
                 embed = discord.Embed(title=f'{titulo}',
@@ -79,6 +81,9 @@ class Modal_Enquete(discord.ui.Modal, title='Criar Evento'):
                     return
             embed.set_footer(text=f'Evento criado por {interaction.user.display_name}\nObs: Clique novamente no botão para retirar seu nome')
             view = Menu_Enquete()
-            await interaction.response.send_message(embed=embed, view=view)
+            try:
+                await interaction.response.send_message(embed=embed, view=view)
+            except:
+                await interaction.response.send_message('Não foi possível criar o evento.', ephemeral=True)
         else:
             await interaction.response.send_message('A data não está no formato correto (hh:mm aaaa-mm-dd) ou não é válida.', ephemeral=True)
