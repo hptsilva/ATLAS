@@ -129,13 +129,5 @@ class Eventos(commands.Cog):
             canal = member.guild.get_channel(int(resultado[0]))
             await canal.send(embed=embed)
 
-    @commands.Cog.listener()
-    async def on_scheduled_event_delete(self, event):
-
-        try:
-            await MySQLConnector.cancelar_evento(MySQLConnector, event.id)
-        except:
-            print(f'Evento ID {event.id} não encontrado')
-
 async def setup(bot):
     await bot.add_cog(Eventos(bot))
