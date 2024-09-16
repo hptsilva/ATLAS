@@ -117,11 +117,9 @@ class Interacao(commands.Cog):
                                 value= f'{descricao}' if descricao else 'None',
                                 inline=False)
                 # Se o servidor não tiver um banner, o bot irá desconsiderar essa condição.
-                try:
+                if (ctx.guild.icon is not None):
                     guild_banner_url = ctx.guild.icon.url
                     embed.set_thumbnail(url=f'{guild_banner_url}')
-                except:
-                    pass
                 embed.set_footer(text=f'Servidor: {ctx.guild.name}')
                 try:
                     # Envia informações do evento na dm do criador.
