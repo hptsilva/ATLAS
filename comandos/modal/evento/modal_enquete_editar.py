@@ -93,12 +93,9 @@ class Modal_Enquete_Editar(discord.ui.Modal, title = 'Editar Evento'):
         embed.add_field(name='🟦 Talvez:', value=f'{value_talvez}', inline=True)
         if url_image != '' and url_image != None and self.url_imagem.value != '{apagar}':
             embed.set_image(url=f'{url_image}')
-        text_footer = embed_antigo.footer.text
-        icon_url = embed_antigo.footer.icon_url
-        embed.set_footer(text=f'{text_footer}',
-                         icon_url=f'{icon_url}',
-        )
+        footer = embed_antigo.footer.text
+        embed.set_footer(text=f'{footer}')
         try:
-            await interaction.response.edit_message(content='@everyone', embed=embed, allowed_mentions = discord.AllowedMentions(everyone=True, users=True))
+            await interaction.response.edit_message(embed=embed)
         except:
             await interaction.response.send_message('Não foi possível alterar o evento.', ephemeral=True)

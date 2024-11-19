@@ -85,7 +85,7 @@ class Modal_Enquete(discord.ui.Modal, title='Criar Evento'):
             )
             view = Menu_Enquete()
             try:
-                await interaction.response.send_message(content='@everyone',embed=embed, view=view, allowed_mentions = discord.AllowedMentions(everyone=True, users=True))
+                await interaction.response.send_message(embed=embed, view=view)
             except:
                 await interaction.response.send_message('Não foi possível criar o evento.', ephemeral=True)
         else:

@@ -83,6 +83,17 @@ class Eventos(commands.Cog):
             canal = member.guild.get_channel(int(resultado[0]))
             await asyncio.sleep(0.35)
             await canal.send(content=f'{member.mention}',embed=embed)
+            embed = discord.Embed(
+                title = f':shield: Você entrou no servidor {member.guild.name}  :shield:',
+                description = f'Regras:\n\n- Seja respeitoso com todos os membros do servidor.\n- Utilize os canais de texto da maneira correta. Veja a descrição de cada canal.\n- Sem mensagens de spam e phishing.\n\n **Não seguir qualquer uma das regras anteriores é passível de banimento.**\n\n**Obs:** Para criar convites no servidor, use o comando /criar_convite.',
+                color = COLOR
+            )
+            if (member.guild.icon is not None):
+                embed.set_thumbnail(url=member.guild.icon.url)
+            try:
+                await member.send(embed=embed)
+            except:
+                pass
             try:
                 resultado = await MySQLConnector.pesquisar_cargo(id_server)
                 if resultado:
@@ -109,18 +120,6 @@ class Eventos(commands.Cog):
             embed.set_thumbnail(url=avatar_url)
             canal = member.guild.get_channel(int(resultado[0]))
             await canal.send(embed=embed)
-
-    # Verifica se a mensagem enviada foi feita pelo bot e se ela possue uma view
-    @commands.Cog.listener()
-    async def on_message(self, message):
-
-        if message.author.id == self.bot.application_id and message.components != []:
-            channel = message.channel
-            channel_id = channel.id
-            guild = message.guild
-            guild_id = guild.id
-            MySQLConnector = mysql_connection.MySQLConnector()
-            await MySQLConnector.inserir_view(message.id, guild_id, channel_id)
 
 async def setup(bot):
     await bot.add_cog(Eventos(bot))
