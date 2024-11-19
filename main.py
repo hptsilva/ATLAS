@@ -15,12 +15,12 @@ bot = commands.AutoShardedBot(command_prefix='$i', intents=discord.Intents.all()
 
 # Carregar comandos
 async def load_extensions(self):
-
-     await self.load_extension('comandos.interacao.interaction')
-     await self.load_extension('comandos.moderacao.moderation')
-     await self.load_extension('comandos.eventos.events')
-     await self.load_extension('comandos.eventos.exceptions')
-     await self.load_extension('comandos.exclusivo.owner_commands')
+    
+    await self.load_extension('comandos.interacao.interaction')
+    await self.load_extension('comandos.moderacao.moderation')
+    await self.load_extension('comandos.eventos.events')
+    await self.load_extension('comandos.eventos.exceptions')
+    await self.load_extension('comandos.exclusivo.owner_commands')
 
 asyncio.run(load_extensions(bot))
 
