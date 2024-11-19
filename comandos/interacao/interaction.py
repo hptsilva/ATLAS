@@ -6,7 +6,7 @@ from mysql_connection import MySQLConnector
 from decouple import config
 
 COLOR = int(config('COLOR'))
-ICON_URL = str(config('ICON_URL'))
+ICON_URL = config('ICON_URL')
 
 class Interacao(commands.Cog):
 
