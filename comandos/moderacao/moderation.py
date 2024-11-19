@@ -96,7 +96,7 @@ class Moderacao(commands.Cog):
         else:
             await ctx.send('Servidor não encontrado na base de dados. Informe o dono da aplicação.', ephemeral=True)
 
-    # Retira o timeout para todos os membros do servidor.
+    # Retira o timeout de todos os membros do servidor.
     @commands.hybrid_command(name='liberar', description='Libere o servidor da quarentena.')
     @commands.guild_only()
     @app_commands.default_permissions(administrator=True)
