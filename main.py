@@ -5,7 +5,10 @@ import discord
 import asyncio
 from decouple import config
 from discord.ext import commands
-from comandos.modal.modal_enquete import Modal_Enquete
+from discord import app_commands
+from comandos.modal.evento.modal_enquete import Modal_Enquete
+from comandos.modal.post.modal_postagem import Modal_Postagem
+from comandos.modal.aviso.modal_aviso import Modal_Aviso
 
 flags = discord.MemberCacheFlags.all()
 bot = commands.AutoShardedBot(command_prefix='$i', intents=discord.Intents.all(), shard_count=1, member_cache_flags=flags)
@@ -27,5 +30,19 @@ asyncio.run(load_extensions(bot))
 async def enquete(interaction: discord.Interaction):
 
      await interaction.response.send_modal(Modal_Enquete())
+
+@bot.tree.command(name='postar', description='Crie uma postagem.')
+@commands.guild_only()
+@app_commands.default_permissions(administrator=True)
+async def postagem(interaction: discord.Interaction):
+
+    await interaction.response.send_modal(Modal_Postagem())
+
+@bot.tree.command(name='avisar', description='Crie uma mensagem de aviso.')
+@commands.guild_only()
+@app_commands.default_permissions(administrator=True)
+async def aviso(interaction: discord.Interaction):
+
+    await interaction.response.send_modal(Modal_Aviso())
 
 bot.run(config('TOKEN')) # Executa uma instância do bot

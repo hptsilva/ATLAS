@@ -16,7 +16,7 @@ class Moderacao(commands.Cog):
     @app_commands.default_permissions(kick_members=True)
     async def expulsar(self, ctx, membro: discord.Member):
 
-        await membro.kick(reason="Porque eu quero.")
+        await membro.kick(reason=f"Expulso(a) via comando por {ctx.author.name}")
         nome = membro.display_name
         await ctx.send(f'{nome} foi expulso(a) do servidor.')
 
@@ -26,15 +26,15 @@ class Moderacao(commands.Cog):
     @app_commands.default_permissions(ban_members=True)
     async def banir(self, ctx, membro: discord.Member):
 
-        await membro.ban(reason="Porque eu quero.")
+        await membro.ban(reason=f"Banido(a) via comando por {ctx.author.name}")
         nome = membro.display_name
         await ctx.send(f'{nome} foi banido(a) do servidor.')
 
     # Aplica timeout a alguém no servidor
-    @commands.hybrid_command(name='colocar_castigo', description='Coloque um membro de castigo (tempo em segundos).')
+    @commands.hybrid_command(name='castigar', description='Coloque um membro de castigo (tempo em segundos).')
     @commands.guild_only()
     @app_commands.default_permissions(moderate_members=True)
-    async def colocar_castigo(self, ctx, membro: discord.Member, *, tempo: int):
+    async def castigar(self, ctx, membro: discord.Member, *, tempo: int):
 
         await membro.timeout(timedelta(seconds = tempo))
         nome = membro.display_name
@@ -122,13 +122,13 @@ class Moderacao(commands.Cog):
             await ctx.send('Servidor não encontrado na base de dados. Informe o dono da aplicação.', ephemeral=True)
 
     # Apague um número determinado de mensagens
-    @commands.hybrid_command(name='apagar_mensagens', description='Apague mensagens do servidor.')
+    @commands.hybrid_command(name='apagar', description='Apague mensagens do servidor.')
     @app_commands.default_permissions(administrator=True)
     @commands.guild_only()
     async def apagar(self, ctx, quantidade: int):
 
-        if quantidade < 0:
-            await ctx.send('Envie um valor positivo', ephemeral=True)
+        if quantidade <= 0:
+            await ctx.send('Digite um valor maior que 0.', ephemeral=True)
             return
         await ctx.send(f'Deletando mensagens...', ephemeral=True)
         numero = 1
@@ -140,7 +140,7 @@ class Moderacao(commands.Cog):
             numero += 1
 
     # Escolhe o canal de boas vindas
-    @commands.hybrid_command(name='escolher_canal_de_boas_vindas', description='Escolhe um canal de texto para ser o canal de boas-vindas.')
+    @commands.hybrid_command(name='canal_de_boas_vindas', description='Escolhe um canal de texto para ser o canal de boas-vindas.')
     @commands.guild_only()
     @app_commands.default_permissions(administrator=True)
     async def escolher_canal_boas_vindas(self, ctx, canal: discord.TextChannel):
@@ -150,7 +150,7 @@ class Moderacao(commands.Cog):
         await ctx.send(f'Canal de boas-vindas escolhido.', ephemeral=True)
 
     # Escolher cargo de boas vindas
-    @commands.hybrid_command(name='escolher_cargo_de_boas_vindas', description='Escolhe um cargo que o membro irá ganhar ao entrar no servidor.')
+    @commands.hybrid_command(name='cargo_de_boas_vindas', description='Escolhe um cargo que o membro irá ganhar ao entrar no servidor.')
     @commands.guild_only()
     @app_commands.default_permissions(administrator=True)
     async def escolher_cargo_boas_vindas(self, ctx, cargo: discord.Role):
@@ -160,7 +160,7 @@ class Moderacao(commands.Cog):
         await ctx.send(f'Cargo de boas-vindas escolhido.', ephemeral=True)
 
     # Escolher canal de membros que saiu do servidor
-    @commands.hybrid_command(name='escolher_canal_membros_removidos', description='Escolhe um canal de texto onde o ISAC irá avisar quando um membro sair do servidor.')
+    @commands.hybrid_command(name='canal_membros_removidos', description='Escolhe um canal de texto para notificação quando um membro sair do servidor.')
     @commands.guild_only()
     @app_commands.default_permissions(administrator=True)
     async def escolher_canal_membros_removidos(self, ctx, canal: discord.TextChannel):
@@ -170,16 +170,16 @@ class Moderacao(commands.Cog):
         await ctx.send(f'Canal de membros removidos escolhido.', ephemeral=True)
 
     # Comando usado para apagar mensagens privadas do bot
-    @commands.hybrid_command(name='apagar_mensagens_privadas', description='Apague mensagens privadas do bot.')
+    @commands.hybrid_command(name='apagar_dm', description='Apague mensagens privadas do ATLAS.')
     @commands.cooldown(1, 300, commands.BucketType.member) # Limita o uso do comando para a cada 5 min
     @commands.dm_only()
     async def apagar_dm_mensagens(self, ctx):
 
         member_obj = self.bot.get_user(ctx.author.id)
-        await ctx.send('Pesquisando mensagens do bot na sua DM...', ephemeral=True)
+        await ctx.send('Pesquisando mensagens...', ephemeral=True)
         messages = [message async for message in member_obj.history(limit=None)]
         if messages == []:
-            await ctx.send('Não há mensagens a serem apagadas.', ephemeral=True)
+            await ctx.send('Não existem mensagens do ATLAS na sua dm.', ephemeral=True)
             return
         for message in messages:
             try:
@@ -187,6 +187,7 @@ class Moderacao(commands.Cog):
             except:
                 pass
             await asyncio.sleep(0.5)
+        await ctx.send('Concluído.', ephemeral=True)
 
 async def setup(bot):
     await bot.add_cog(Moderacao(bot))

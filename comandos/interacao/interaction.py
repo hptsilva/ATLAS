@@ -1,13 +1,12 @@
 import discord
 import random
-import re
 import requests
-import timezone
 from discord.ext import commands
 from mysql_connection import MySQLConnector
 from decouple import config
 
 COLOR = int(config('COLOR'))
+ICON_URL = str(config('ICON_URL'))
 
 class Interacao(commands.Cog):
 
@@ -27,7 +26,7 @@ class Interacao(commands.Cog):
 
 
     # Comando usado para mostrar a foto do perfil de um usuário
-    @commands.hybrid_command(name='avatar', description='Veja a foto de perfil de alguém.')
+    @commands.hybrid_command(name='avatar', description='Veja a foto de perfil de um membro do servidor.')
     async def avatar(self, ctx, usuario: discord.User = None):
 
         if usuario is None:
@@ -37,19 +36,18 @@ class Interacao(commands.Cog):
         embed.set_image(url=avatar_url)
         display_name = usuario.display_name
         embed.set_author(name=display_name,
-                        icon_url="https://onedrive.live.com/embed?resid=4304D643148B3DFB%214304&authkey=%21AET1i2KgxBylAUo&width=677&height=684")
+                        icon_url=ICON_URL)
         await ctx.send(embed=embed)
 
     # Gera um número aletório de 1 até o valor especificado pelo usuário
-    @commands.hybrid_command(name='roll', description='Deixe o bot gerar um valor aleatório de 1 até o número especificado.')
-    async def roll(self, ctx, valor: int):
+    @commands.hybrid_command(name='aleatorio', description='Gere um número aleatório de 1 até o valor especificado.')
+    async def aleatorio(self, ctx, valor: int):
 
         if(valor < 0):
             await ctx.send(f'Digite um valor maior ou igual a 1', ephemeral=True)
             return
         numero = random.randint(1, valor)
         await ctx.send(f'O valor gerado é: {numero}.')
-
 
     # Comando para ajudar a usar o comando de eventos
     @commands.hybrid_command(name='timezone', description='Zonas de tempo disponíveis para o comando /evento.')
@@ -58,7 +56,7 @@ class Interacao(commands.Cog):
 
         fuso_valor = '1 : Brazil/Acre (GMT-5)\n2 : Brazil/West (GMT-4)\n3 : Brazil/East (GMT-3)\n4 : Brazil/DeNoronha (GMT-2)'
 
-        embed = discord.Embed(title='Zonas de tempo disponíveis.',
+        embed = discord.Embed(title='Zonas de tempo disponíveis:',
                               color=COLOR)
         embed.add_field(name='',
                         value=f'{fuso_valor}',
@@ -66,14 +64,23 @@ class Interacao(commands.Cog):
         await ctx.send(embed=embed, ephemeral=True)
 
     # Cria um convite para o servidor
-    @commands.hybrid_command(name='criar_convite', description='Crie um convite. O convite expira depois de 10 min após a criação.')
+    @commands.hybrid_command(name='convite', description='Crie um convite. O convite irá expirar depois de 10 min após a criação.')
     @commands.guild_only()
     @commands.cooldown(7, 60, commands.BucketType.member) # Limita o uso do comando para 7 usos a cada 60 segundos
     async def criar_convite(self, ctx):
 
         channel = ctx.channel
-        invite = await channel.create_invite(max_age=600, max_uses=1, reason=f'Convite criado por {ctx.author.name} usando o comando /criar_convite.')
+        invite = await channel.create_invite(max_age=600, max_uses=1, reason=f'Convite criado por {ctx.author.name} usando o comando /convite.')
         await ctx.send(f'Convite criado: {invite.url}', ephemeral=True)
+
+    #Latencia do bot
+    @commands.hybrid_command(name='ping', description='Latência da aplicação.')
+    @commands.cooldown(5, 60, commands.BucketType.member) # Limita o uso do comando para 5 usos a cada 60 segundos
+    async def ping(self, ctx):
+
+        ping = self.bot.latency
+        ping = "{:.2f}".format(ping)
+        await ctx.send(f'Latência: {ping} segundo(s)', ephemeral=True)
 
 async def setup(bot):
     await bot.add_cog(Interacao(bot))

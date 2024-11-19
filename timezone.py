@@ -9,7 +9,7 @@ class Fuso_Horario:
             1 : 'Brazil/Acre',
             2 : 'Brazil/West',
             3 : 'Brazil/East',
-            4: 'Brazil/DeNoronha',
+            4 : 'Brazil/DeNoronha',
         }
 
         data_hora_str = f"{data} {horario}"

@@ -5,6 +5,9 @@ import pytz
 from decouple import config
 from discord.ext import commands
 from mysql_connection import MySQLConnector
+from comandos.modal.evento.buttons import Menu_Enquete
+from comandos.eventos.notificar import Notificar
+from comandos.eventos.refresh import Refresh
 
 COLOR = int(config('COLOR'))
 
@@ -17,27 +20,16 @@ class Eventos(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
 
+        print('\nIniciando aplicação...')
+        await asyncio.sleep(2)
         MySQLConnector = mysql_connection.MySQLConnector()
         await self.bot.tree.sync(guild = None)
-        print(f'\nBot ({self.bot.user}) iniciado - (ID: {self.bot.user.id})')
-        ordem = 1
-        # Alterar a atividade do bot
-        await self.bot.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name='Starfield'))
-        # Lista os nomes e IDs do servidores que o Bot é membro e atualiza o banco de dados caso o nome do servidor foi alterado
         print(f'Número de servidores: {len(self.bot.guilds)}\n')
-        print(f'--------------------------------------------------------')
-        for guild in self.bot.guilds:
-            print(f'#{ordem} Servidor ({guild.name}) - ID ({guild.id})')
-            # Criando a sessão
-            resultado = await MySQLConnector.procurar_servidor(guild.id)
-            if resultado is None:
-                await MySQLConnector.inserir_servidor(guild.id, guild.name)
-            elif resultado[2] is not guild.name:
-                await MySQLConnector.alterar_nome_servidor(guild.id, guild.name)
-            ordem += 1
         print('--------------------------------------------------------')
         print(f'------------------- {self.BOT_NAME} INICIADO ----------------------')
-        print('--------------------------------------------------------')
+        print('--------------------------------------------------------\n')
+        self.bot.loop.create_task(Refresh.refresh_views(self.bot))
+        self.bot.loop.create_task(Notificar.notificar_evento(self.bot))
 
     # Envia uma mensagem em um canal de texto quando o bot entrar no servidor
     @commands.Cog.listener()
@@ -91,16 +83,6 @@ class Eventos(commands.Cog):
             canal = member.guild.get_channel(int(resultado[0]))
             await asyncio.sleep(0.35)
             await canal.send(content=f'{member.mention}',embed=embed)
-            embed = discord.Embed(
-                title = f':shield: Você entrou no servidor {member.guild.name}  :shield:',
-                description = f'Regras:\n\n- Seja respeitoso com todos os membros do servidor.\n- Utilize os canais de texto da maneira correta. Veja a descrição de cada canal.\n- Sem mensagens de spam e phishing.\n\n **Não seguir qualquer uma das regras anteriores é passível de banimento.**\n\n**Obs:** Para criar convites no servidor, use o comando /criar_convite.',
-                color = COLOR
-            )
-            embed.set_thumbnail(url=member.guild.icon.url)
-            try:
-                await member.send(embed=embed)
-            except:
-                pass
             try:
                 resultado = await MySQLConnector.pesquisar_cargo(id_server)
                 if resultado:
@@ -128,13 +110,17 @@ class Eventos(commands.Cog):
             canal = member.guild.get_channel(int(resultado[0]))
             await canal.send(embed=embed)
 
+    # Verifica se a mensagem enviada foi feita pelo bot e se ela possue uma view
     @commands.Cog.listener()
-    async def on_scheduled_event_delete(self, event):
+    async def on_message(self, message):
 
-        try:
-            await MySQLConnector.cancelar_evento(MySQLConnector, event.id)
-        except:
-            print(f'Evento ID {event.id} não encontrado')
+        if message.author.id == self.bot.application_id and message.components != []:
+            channel = message.channel
+            channel_id = channel.id
+            guild = message.guild
+            guild_id = guild.id
+            MySQLConnector = mysql_connection.MySQLConnector()
+            await MySQLConnector.inserir_view(message.id, guild_id, channel_id)
 
 async def setup(bot):
     await bot.add_cog(Eventos(bot))

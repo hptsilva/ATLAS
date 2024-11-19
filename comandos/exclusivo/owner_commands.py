@@ -36,19 +36,5 @@ class Exclusivo(commands.Cog):
         await self.bot.change_presence(activity=None)
         await ctx.send('Presença alterada.', ephemeral=True)
 
-    @commands.hybrid_command(name = 'aviso' , description='O bot envia uma mensagem a um servidor e canal de texto específico.')
-    @commands.is_owner()
-    async def aviso(self, ctx, id_canal_de_texto, mensagem):
-
-        canal_de_texto = self.bot.get_channel(int(id_canal_de_texto))
-        embed = discord.Embed(description=f'> {mensagem}',
-                              color=COLOR
-            )
-        embed.set_footer(text=f"Atenciosamente, {BOT_NAME}",
-                       icon_url='https://onedrive.live.com/embed?resid=4304D643148B3DFB%214304&authkey=%21AET1i2KgxBylAUo&width=677&height=684'
-            )
-        await canal_de_texto.send(content="@everyone",embed=embed)
-        await ctx.send('Mensagem enviada.', ephemeral=True)
-
 async def setup(bot):
     await bot.add_cog(Exclusivo(bot))

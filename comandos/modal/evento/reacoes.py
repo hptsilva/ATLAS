@@ -2,6 +2,7 @@ import discord
 from decouple import config
 
 COLOR = int(config('COLOR'))
+ICON_URL = config('ICON_URL')
 
 class Reacoes_Enquete:
 
@@ -60,10 +61,10 @@ class Reacoes_Enquete:
             mencoes3 = "\n".join([f"{nome}" for nome in mencoes_talvez])
             url_image = embed_antigo.image.url
             embed.timestamp = embed_antigo.timestamp
-            embed.add_field(name='Horário:', value=f'<t:{int(embed.timestamp.timestamp())}:f>', inline=False)
-            embed.add_field(name='✅ Sim:', value=f'{mencoes1}', inline=True)
-            embed.add_field(name='⛔ Não:', value=f'{mencoes2}', inline=True)
-            embed.add_field(name='❔ Talvez:', value=f'{mencoes3}', inline=True)
+            embed.add_field(name='Horário:', value=f':alarm_clock: <t:{int(embed.timestamp.timestamp())}:f>\n:hourglass: <t:{int(embed.timestamp.timestamp())}:R>', inline=False)
+            embed.add_field(name='🟩 Sim:', value=f'{mencoes1}', inline=True)
+            embed.add_field(name='🟥 Não:', value=f'{mencoes2}', inline=True)
+            embed.add_field(name='🟦 Talvez:', value=f'{mencoes3}', inline=True)
         # Se a reação for ⛔
         elif reacao == 2:
             # retira o dono da reação na lista
@@ -100,10 +101,10 @@ class Reacoes_Enquete:
             mencoes3 = "\n".join([f"{nome}" for nome in mencoes_talvez])
             url_image = embed_antigo.image.url
             embed.timestamp = embed_antigo.timestamp
-            embed.add_field(name='Horário:', value=f'<t:{int(embed.timestamp.timestamp())}:f>', inline=False)
-            embed.add_field(name='✅ Sim:', value=f'{mencoes1}', inline=True)
-            embed.add_field(name='⛔ Não:', value=f'{mencoes2}', inline=True)
-            embed.add_field(name='❔ Talvez:', value=f'{mencoes3}', inline=True)
+            embed.add_field(name='Horário:', value=f':alarm_clock: <t:{int(embed.timestamp.timestamp())}:f>\n:hourglass: <t:{int(embed.timestamp.timestamp())}:R>', inline=False)
+            embed.add_field(name='🟩 Sim:', value=f'{mencoes1}', inline=True)
+            embed.add_field(name='🟥 Não:', value=f'{mencoes2}', inline=True)
+            embed.add_field(name='🟦 Talvez:', value=f'{mencoes3}', inline=True)
         # Se a reação for ❔
         elif reacao == 3:
             mencoes_sim = value_sim.split('\n')
@@ -139,40 +140,46 @@ class Reacoes_Enquete:
             mencoes3 = "\n".join([f"{nome}" for nome in mencoes_talvez])
             url_image = embed_antigo.image.url
             embed.timestamp = embed_antigo.timestamp
-            embed.add_field(name='Horário:', value=f'<t:{int(embed.timestamp.timestamp())}:f>', inline=False)
-            embed.add_field(name='✅ Sim:', value=f'{mencoes1}', inline=True)
-            embed.add_field(name='⛔ Não:', value=f'{mencoes2}', inline=True)
-            embed.add_field(name='❔ Talvez:', value=f'{mencoes3}', inline=True)
+            embed.add_field(name='Horário:', value=f':alarm_clock: <t:{int(embed.timestamp.timestamp())}:f>\n:hourglass: <t:{int(embed.timestamp.timestamp())}:R>', inline=False)
+            embed.add_field(name='🟩 Sim:', value=f'{mencoes1}', inline=True)
+            embed.add_field(name='🟥 Não:', value=f'{mencoes2}', inline=True)
+            embed.add_field(name='🟦 Talvez:', value=f'{mencoes3}', inline=True)
         elif reacao == 4:
             url_image = embed_antigo.image.url
             embed.timestamp = embed_antigo.timestamp
-            embed.add_field(name='Horário:', value=f'<t:{int(embed.timestamp.timestamp())}:f>', inline=False)
+            embed.add_field(name='Horário:', value=f':alarm_clock: <t:{int(embed.timestamp.timestamp())}:f>\n:hourglass: <t:{int(embed.timestamp.timestamp())}:R>', inline=False)
             value_sim = campo_sim.value
             value_nao = campo_nao.value
             value_talvez = campo_talvez.value
-            embed.add_field(name='✅ Sim:', value=f'{value_sim}', inline=True)
-            embed.add_field(name='⛔ Não:', value=f'{value_nao}', inline=True)
-            embed.add_field(name='❔ Talvez:', value=f'{value_talvez}', inline=True)
+            embed.add_field(name='🟩 Sim:', value=f'{value_sim}', inline=True)
+            embed.add_field(name='🟥 Não:', value=f'{value_nao}', inline=True)
+            embed.add_field(name='🟦 Talvez:', value=f'{value_talvez}', inline=True)
             if url_image != '' and url_image != None:
                 embed.set_image(url=f'{url_image}')
-            embed.set_footer(text=f'EVENTO CANCELADO')
+            embed.set_footer(text=f'EVENTO CANCELADO',
+                             icon_url=ICON_URL,
+            )
             return embed
         else:
             url_image = embed_antigo.image.url
             embed.timestamp = embed_antigo.timestamp
-            embed.add_field(name='Horário:', value=f'<t:{int(embed.timestamp.timestamp())}:f>', inline=False)
+            embed.add_field(name='Horário:', value=f':alarm_clock: <t:{int(embed.timestamp.timestamp())}:f>\n:hourglass: <t:{int(embed.timestamp.timestamp())}:R>', inline=False)
             value_sim = campo_sim.value
             value_nao = campo_nao.value
             value_talvez = campo_talvez.value
-            embed.add_field(name='✅ Sim:', value=f'{value_sim}', inline=True)
-            embed.add_field(name='⛔ Não:', value=f'{value_nao}', inline=True)
-            embed.add_field(name='❔ Talvez:', value=f'{value_talvez}', inline=True)
+            embed.add_field(name='🟩 Sim:', value=f'{value_sim}', inline=True)
+            embed.add_field(name='🟥 Não:', value=f'{value_nao}', inline=True)
+            embed.add_field(name='🟦 Talvez:', value=f'{value_talvez}', inline=True)
             if url_image != '' and url_image != None:
                 embed.set_image(url=f'{url_image}')
-            embed.set_footer(text=f'EVENTO CONCLUÍDO\nObrigado(a) pela presença de todos.')
+            embed.set_footer(text=f'EVENTO CONCLUÍDO\nObrigado(a) pela presença de todos.',
+                             icon_url=ICON_URL,
+            )
             return embed
         if url_image != '' and url_image != None:
             embed.set_image(url=f'{url_image}')
-        footer = embed_antigo.footer.text
-        embed.set_footer(text=f'{footer}')
+        text_footer = embed_antigo.footer.text
+        embed.set_footer(text=f'{text_footer}',
+                         icon_url=ICON_URL,
+        )
         return embed

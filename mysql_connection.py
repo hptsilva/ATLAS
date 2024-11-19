@@ -74,15 +74,6 @@ class MySQLConnector:
             self.cnx.commit()
             self.cnx.close()
 
-    async def procurar_servidor_banido(self, id_server):
-
-        self.cnx._open_connection()
-        procurar = f'SELECT * FROM {self.DB_DATABASE}.servidores_banidos WHERE id = %s'
-        self.cursor.execute(procurar, (id_server, ))
-        resultado = self.cursor.fetchone()
-        self.cnx.close()
-        return resultado
-
     async def pesquisar_cargo(self, id_servidor):
 
         self.cnx._open_connection()
@@ -91,7 +82,6 @@ class MySQLConnector:
         resultado = self.cursor.fetchone()
         self.cnx.close()
         return resultado
-
 
     async def inserir_cargo(self, cargo, id_servidor):
 
@@ -132,3 +122,77 @@ class MySQLConnector:
             self.cnx.commit()
             self.cnx.close()
 
+    async def pesquisar_evento(self, id_evento):
+
+        self.cnx._open_connection()
+        pesquisar = 'SELECT * FROM eventos WHERE id = %s'
+        self.cursor.execute(pesquisar, (id_evento, ))
+        resultado = self.cursor.fetchone()
+        self.cnx.close()
+        return resultado
+
+    async def pesquisar_eventos(self):
+
+        self.cnx._open_connection()
+        pesquisar = 'SELECT * FROM eventos WHERE notificado = %s'
+        self.cursor.execute(pesquisar, ('NÃO', ))
+        resultado = self.cursor.fetchall()
+        self.cnx.close()
+        return resultado
+
+    async def excluir_evento(self, id_evento):
+
+        self.cnx._open_connection()
+        excluir = 'DELETE FROM eventos WHERE id = %s'
+        verificacao = self.cursor.execute(excluir, (id_evento, ))
+        self.cnx.commit()
+        self.cnx.close()
+        return verificacao
+
+    async def inserir_evento(self, id_evento, id_servidor, id_canal):
+
+        self.cnx._open_connection()
+        inserir = 'INSERT INTO eventos VALUES(%s, %s, %s, %s)'
+        self.cursor.execute(inserir, (id_evento, id_servidor, id_canal, 'NÃO', ))
+        self.cnx.commit()
+        self.cnx.close()
+
+    async def alterar_evento(self, id_evento):
+
+        self.cnx._open_connection()
+        alterar = 'UPDATE eventos set notificado = %s WHERE id = %s'
+        self.cursor.execute(alterar, ('SIM', id_evento, ))
+        self.cnx.commit()
+        self.cnx.close()
+
+    async def pesquisar_all_view(self):
+
+        self.cnx._open_connection()
+        recuperar = 'SELECT * FROM views'
+        self.cursor.execute(recuperar)
+        resultado = self.cursor.fetchall()
+        return resultado
+
+    async def pesquisar_view(self, id_evento):
+
+        self.cnx._open_connection()
+        pesquisar = 'SELECT * FROM views WHERE id = %s'
+        self.cursor.execute(pesquisar, (id_evento, ))
+        view = self.cursor.fetchall()
+        self.cnx.close()
+        return view
+
+    async def inserir_view(self, id_mensagem, id_servidor, id_canal):
+        self.cnx._open_connection()
+        inserir = 'INSERT INTO views VALUES(%s, %s, %s)'
+        self.cursor.execute(inserir, (id_mensagem, id_servidor, id_canal, ))
+        self.cnx.commit()
+        self.cnx.close()
+
+    async def excluir_view(self, id_evento):
+
+        self.cnx._open_connection()
+        excluir = 'DELETE FROM views WHERE id = %s'
+        self.cursor.execute(excluir, (id_evento, ))
+        self.cnx.commit()
+        self.cnx.close()
