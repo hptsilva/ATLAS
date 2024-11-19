@@ -31,6 +31,7 @@ async def enquete(interaction: discord.Interaction):
 
      await interaction.response.send_modal(Modal_Enquete())
 
+# Carrega o comando para criação de postagens. Apenas pode ser utilizado dentro de um servidor
 @bot.tree.command(name='postar', description='Crie uma postagem.')
 @commands.guild_only()
 @app_commands.default_permissions(administrator=True)
@@ -38,6 +39,7 @@ async def postagem(interaction: discord.Interaction):
 
     await interaction.response.send_modal(Modal_Postagem())
 
+# Carrega o comando para criação de mensagens de aviso. Apenas pode ser utilizado dentro de um servidor
 @bot.tree.command(name='avisar', description='Crie uma mensagem de aviso.')
 @commands.guild_only()
 @app_commands.default_permissions(administrator=True)
@@ -45,4 +47,5 @@ async def aviso(interaction: discord.Interaction):
 
     await interaction.response.send_modal(Modal_Aviso())
 
-bot.run(config('TOKEN')) # Executa uma instância do bot
+# Executa uma instância do bot
+bot.run(config('TOKEN'))
