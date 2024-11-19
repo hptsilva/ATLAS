@@ -26,7 +26,7 @@
 * /evento  
 ![evento](https://github.com/user-attachments/assets/a0646983-12e9-49b3-9c7e-96d5288fc639)
 * (Modelo da mensagem para um evento)  
-![modelo](https://github.com/user-attachments/assets/7a3d5f51-9570-4dad-a9f6-2f04622a86ef)
+![Captura de tela de 2024-11-19 17-47-34](https://github.com/user-attachments/assets/9b0feec2-1033-44a4-89f6-21ad03ab00cd)
 * (Janela para editar a mensagem)  
 ![editar-evento](https://github.com/user-attachments/assets/5d6306e1-3893-4d70-86a2-2c12606b09cc)
 * Mensagem de boas-vindas  
