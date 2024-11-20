@@ -17,7 +17,7 @@
   $ cd discord.py
   $ python3 -m pip install -U .[voice]
 ```
-# Comandos:
+# Comandos possíveis:
 
 * /avatar  
 ![avatar](https://github.com/hptsilva/ATLAS-DISCORD-BOT/assets/41704578/cdc2f988-8361-4b1f-98b8-6314ca9acb9c)
