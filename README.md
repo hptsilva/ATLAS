@@ -20,7 +20,7 @@
 # Comandos possíveis:
 
 * /avatar  
-![avatar](https://github.com/hptsilva/ATLAS-DISCORD-BOT/assets/41704578/cdc2f988-8361-4b1f-98b8-6314ca9acb9c)
+![image](https://github.com/user-attachments/assets/e3da74ff-653a-48af-95c0-ed80eda289e2)
 * /evento  
 ![evento](https://github.com/user-attachments/assets/a0646983-12e9-49b3-9c7e-96d5288fc639)
 * (Modelo da mensagem para um evento)  
