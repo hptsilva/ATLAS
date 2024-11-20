@@ -23,9 +23,9 @@
 ![image](https://github.com/user-attachments/assets/e3da74ff-653a-48af-95c0-ed80eda289e2)
 * /evento  
 ![image](https://github.com/user-attachments/assets/bf1b7552-ba94-48b1-8b32-3fe3a6e4a01c)
-* (Modelo da mensagem para um evento)  
+* (Modelo da mensagem do evento)  
 ![Captura de tela de 2024-11-19 17-47-34](https://github.com/user-attachments/assets/9b0feec2-1033-44a4-89f6-21ad03ab00cd)
-* (Janela para editar a mensagem)  
+* (Janela para editar o evento)  
 ![editar-evento](https://github.com/user-attachments/assets/5d6306e1-3893-4d70-86a2-2c12606b09cc)
 * Mensagem de boas-vindas  
 ![boas vindas](https://github.com/user-attachments/assets/7e5db295-7013-4731-afe4-99db37baec08)
