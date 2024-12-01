@@ -15,37 +15,37 @@ bot = commands.AutoShardedBot(command_prefix='$i', intents=discord.Intents.all()
 
 # Carregar comandos
 async def load_extensions(self):
-    
-    await self.load_extension('comandos.interacao.interaction')
-    await self.load_extension('comandos.moderacao.moderation')
-    await self.load_extension('comandos.eventos.events')
-    await self.load_extension('comandos.eventos.exceptions')
-    await self.load_extension('comandos.exclusivo.owner_commands')
+
+     await self.load_extension('comandos.interacao.interaction')
+     await self.load_extension('comandos.moderacao.moderation')
+     await self.load_extension('comandos.eventos.events')
+     await self.load_extension('comandos.eventos.exceptions')
+     await self.load_extension('comandos.exclusivo.owner_commands')
 
 asyncio.run(load_extensions(bot))
 
 # Carrega o comando para criação de evento. Apenas pode ser utilizado dentro de um servidor.
 @bot.tree.command(name='evento', description='Crie um evento no servidor.')
+@commands.cooldown(5, 120, commands.BucketType.member)
 @commands.guild_only()
 async def enquete(interaction: discord.Interaction):
 
      await interaction.response.send_modal(Modal_Enquete())
 
-# Carrega o comando para criação de postagens. Apenas pode ser utilizado dentro de um servidor
 @bot.tree.command(name='postar', description='Crie uma postagem.')
+@commands.cooldown(5, 120, commands.BucketType.member)
 @commands.guild_only()
 @app_commands.default_permissions(administrator=True)
 async def postagem(interaction: discord.Interaction):
 
     await interaction.response.send_modal(Modal_Postagem())
 
-# Carrega o comando para criação de mensagens de aviso. Apenas pode ser utilizado dentro de um servidor
 @bot.tree.command(name='avisar', description='Crie uma mensagem de aviso.')
+@commands.cooldown(5, 120, commands.BucketType.member)
 @commands.guild_only()
 @app_commands.default_permissions(administrator=True)
 async def aviso(interaction: discord.Interaction):
 
     await interaction.response.send_modal(Modal_Aviso())
 
-# Executa uma instância do bot
-bot.run(config('TOKEN'))
+bot.run(config('TOKEN')) # Executa uma instância do bot

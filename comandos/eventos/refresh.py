@@ -1,5 +1,4 @@
 import discord
-import asyncio
 import mysql_connection
 from decouple import config
 import mysql_connection
@@ -7,20 +6,29 @@ from comandos.modal.evento.buttons import Menu_Enquete
 
 
 COLOR = int(config('COLOR'))
+connection = mysql_connection.MySQLConnector
+cnx_user, cursor_user = connection.conectar_user()
+cnx_admin, cursor_admin = connection.conectar_admin()
+
 
 class Refresh():
 
     async def refresh_views(client):
 
-        MySQLConnector = mysql_connection.MySQLConnector()
-        views = await MySQLConnector.pesquisar_all_view()
+        recuperar = 'SELECT * FROM views'
+        cursor_user.execute(recuperar)
+        views = cursor_user.fetchall()
         for view in views:
             try:
                 canal_de_texto = await client.fetch_channel(int(view[2]))
                 mensagem = await canal_de_texto.fetch_message(int(view[0]))
             except discord.NotFound:
-                await MySQLConnector.excluir_view(view[0])
-                await MySQLConnector.excluir_evento(view[0])
+                excluir = 'DELETE FROM views WHERE id = %s'
+                cursor_admin.execute(excluir, (view[0], ))
+                cnx_admin.commit()
+                excluir = 'DELETE FROM eventos WHERE id = %s'
+                cursor_admin.execute(excluir, (view[0], ))
+                cnx_admin.commit()
                 continue
             except discord.HTTPException as e:
                 continue
@@ -28,8 +36,12 @@ class Refresh():
                 continue
             componentes = mensagem.components
             if componentes == []:
-                await MySQLConnector.excluir_view(view[0])
-                await MySQLConnector.excluir_evento(view[0])
+                excluir = 'DELETE FROM views WHERE id = %s'
+                cursor_admin.execute(excluir, (view[0], ))
+                cnx_admin.commit()
+                excluir = 'DELETE FROM eventos WHERE id = %s'
+                cursor_admin.execute(excluir, (view[0], ))
+                cnx_admin.commit()
                 continue
             view = Menu_Enquete()
             children = componentes[0].children

@@ -2,7 +2,6 @@ import discord
 from decouple import config
 
 COLOR = int(config('COLOR'))
-ICON_URL = config('ICON_URL')
 
 class Reacoes_Enquete:
 
@@ -157,7 +156,7 @@ class Reacoes_Enquete:
             if url_image != '' and url_image != None:
                 embed.set_image(url=f'{url_image}')
             embed.set_footer(text=f'EVENTO CANCELADO',
-                             icon_url=ICON_URL,
+                             icon_url='https://cdn.discordapp.com/attachments/1302022249389363210/1302022403605659720/warning.png?ex=6741a11b&is=67404f9b&hm=b938c823f51bb59036433b7549074f0d6667a5f580d28e9bae169707427f5d0e&',
             )
             return embed
         else:
@@ -173,13 +172,13 @@ class Reacoes_Enquete:
             if url_image != '' and url_image != None:
                 embed.set_image(url=f'{url_image}')
             embed.set_footer(text=f'EVENTO CONCLUÍDO\nObrigado(a) pela presença de todos.',
-                             icon_url=ICON_URL,
+                             icon_url='https://cdn.discordapp.com/attachments/1302022249389363210/1302022403605659720/warning.png?ex=6741a11b&is=67404f9b&hm=b938c823f51bb59036433b7549074f0d6667a5f580d28e9bae169707427f5d0e&',
             )
             return embed
         if url_image != '' and url_image != None:
             embed.set_image(url=f'{url_image}')
         text_footer = embed_antigo.footer.text
         embed.set_footer(text=f'{text_footer}',
-                         icon_url=ICON_URL,
+                         icon_url='https://cdn.discordapp.com/attachments/1302022249389363210/1302022403605659720/warning.png?ex=6741a11b&is=67404f9b&hm=b938c823f51bb59036433b7549074f0d6667a5f580d28e9bae169707427f5d0e&',
         )
         return embed

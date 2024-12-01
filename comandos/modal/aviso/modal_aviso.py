@@ -3,7 +3,6 @@ from decouple import config
 
 COLOR = int(config('COLOR'))
 BOT_NAME = config('BOT_NAME')
-ICON_URL = config('ICON_URL')
 
 class Modal_Aviso(discord.ui.Modal, title='Criar Aviso'):
 
@@ -28,7 +27,7 @@ class Modal_Aviso(discord.ui.Modal, title='Criar Aviso'):
                               color=COLOR,
         )
         embed.set_footer(text=f"{BOT_NAME}",
-                       icon_url=ICON_URL
+                       icon_url="https://cdn.discordapp.com/attachments/1302022249389363210/1302022403605659720/warning.png?ex=6741a11b&is=67404f9b&hm=b938c823f51bb59036433b7549074f0d6667a5f580d28e9bae169707427f5d0e&"
         )
         client = interaction.client
         channel_id = interaction.channel_id

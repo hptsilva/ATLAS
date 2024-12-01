@@ -4,6 +4,10 @@ from discord.ext import commands
 from discord import app_commands
 from datetime import timedelta
 import mysql_connection
+from datetime import datetime
+
+connection = mysql_connection.MySQLConnector
+cnx_user, cursor_user = connection.conectar_user()
 
 class Moderacao(commands.Cog):
 
@@ -11,48 +15,73 @@ class Moderacao(commands.Cog):
         self.bot = bot
 
     # Expulsar alguém do servidor
-    @commands.hybrid_command(name='expulsar',description='Expulse alguém do servidor.')
+    @commands.hybrid_command(name='expulsar',description='Expulse um membro do servidor.')
     @commands.guild_only()
+    @commands.cooldown(50, 120, commands.BucketType.member)
     @app_commands.default_permissions(kick_members=True)
     async def expulsar(self, ctx, membro: discord.Member):
 
-        await membro.kick(reason=f"Expulso(a) via comando por {ctx.author.name}")
+        try:
+            await membro.kick(reason=f"Expulso(a) via comando por {ctx.author.name}")
+        except discord.Forbidden:
+            await ctx.send('**O usuário alvo possui um cargo superior ou o ATLAS não tem as permissões necessárias.**', ephemeral=True)
+            return
         nome = membro.display_name
         await ctx.send(f'{nome} foi expulso(a) do servidor.')
 
     # Banir alguém do servidor
-    @commands.hybrid_command(name='banir', description ='Bane alguém do servidor.')
+    @commands.hybrid_command(name='banir', description ='Bane um membro do servidor.')
     @commands.guild_only()
+    @commands.cooldown(50, 120, commands.BucketType.member)
     @app_commands.default_permissions(ban_members=True)
     async def banir(self, ctx, membro: discord.Member):
 
-        await membro.ban(reason=f"Banido(a) via comando por {ctx.author.name}")
+        try:
+            await membro.ban(reason=f"Banido(a) via comando por {ctx.author.name}")
+        except discord.Forbidden:
+            await ctx.send('**O usuário alvo possui um cargo superior ou o ATLAS não tem as permissões necessárias.**', ephemeral=True)
+            return
         nome = membro.display_name
         await ctx.send(f'{nome} foi banido(a) do servidor.')
 
     # Aplica timeout a alguém no servidor
     @commands.hybrid_command(name='castigar', description='Coloque um membro de castigo (tempo em segundos).')
     @commands.guild_only()
+    @commands.cooldown(50, 120, commands.BucketType.member)
     @app_commands.default_permissions(moderate_members=True)
     async def castigar(self, ctx, membro: discord.Member, *, tempo: int):
 
-        await membro.timeout(timedelta(seconds = tempo))
+        try:
+            await membro.timeout(timedelta(seconds = tempo))
+        except discord.Forbidden:
+            await ctx.send('**O usuário alvo possui um cargo superior ou o ATLAS não tem as permissões necessárias.**', ephemeral=True)
+            return
         nome = membro.display_name
         await ctx.send(f'{nome} foi colocado(a) de castigo.')
 
     # Retira o timeout de alguém no servidor
     @commands.hybrid_command(name='tirar_castigo', description='Retire um membro do castigo.')
     @commands.guild_only()
+    @commands.cooldown(10, 30, commands.BucketType.member)
     @app_commands.default_permissions(moderate_members=True)
     async def tirar_castigo(self, ctx, membro: discord.Member):
 
-        await membro.timeout(None)
+        try:
+            if (membro.timed_out_until):
+                await membro.timeout(None)
+            else:
+                await ctx.send('**O usuário alvo não está de castigo.**', ephemeral=True)
+                return
+        except discord.Forbidden:
+            await ctx.send('**O usuário alvo possui um cargo superior ou o ATLAS não tem as permissões necessárias.**', ephemeral=True)
+            return
         nome = membro.display_name
         await ctx.send(f'{nome} saiu do castigo.')
 
     # Excluir todos os convites do servidor
-    @commands.hybrid_command(name='excluir_convites', description = 'Exclui todos os convites do servidor.')
+    @commands.hybrid_command(name='excluir_convites', description = 'Exclui todos os convites ativos do servidor.')
     @commands.guild_only()
+    @commands.cooldown(1, 60, commands.BucketType.guild) # Limita o uso de 10 comandos para cada 1 min
     @app_commands.default_permissions(administrator=True)
     async def excluir_convites(self, ctx):
 
@@ -67,63 +96,10 @@ class Moderacao(commands.Cog):
         else:
             await ctx.send('Não existem convites ativos no servidor.', ephemeral=True)
 
-    # Coloca todos os membros do servidor em timeout, exceto os administradores.
-    @commands.hybrid_command(name='quarentena', description = 'Coloque o servidor em quarentena.')
-    @commands.guild_only()
-    @app_commands.default_permissions(administrator=True)
-    async def quarentena(self, ctx):
-
-        await ctx.send('**Ativando quarentena no servidor...**', ephemeral=True)
-        MySQLConnector = mysql_connection.MySQLConnector()
-        id_server = ctx.guild.id
-        guild = self.bot.get_guild(id_server)
-        resultado = await MySQLConnector.procurar_servidor(id_server)
-        if resultado:
-            try:
-                # Revoga todos os convites ativos no servidor
-                invites = await guild.invites()
-                for invite in invites:
-                    await self.bot.delete_invite(invite)
-                for member in ctx.guild.members:
-                    if not member.guild_permissions.administrator:
-                        # coloca os membros em timeout num período de 24 horas
-                        await member.timeout(timedelta(hours=24), reason='Servidor em quarentena')
-                # altera o status do servidor para quarentena
-                await MySQLConnector.alterar_quarentena(id_server, 'quarentena')
-                await ctx.send('**Servidor fechado.**', ephemeral=True)
-            except:
-                await ctx.send('Ocorreu algum erro durante o comando. Informe o dono da aplicação.', ephemeral=True)
-        else:
-            await ctx.send('Servidor não encontrado na base de dados. Informe o dono da aplicação.', ephemeral=True)
-
-    # Retira o timeout de todos os membros do servidor.
-    @commands.hybrid_command(name='liberar', description='Libere o servidor da quarentena.')
-    @commands.guild_only()
-    @app_commands.default_permissions(administrator=True)
-    async def liberar(self, ctx):
-
-        await ctx.send('**Desativando quarentena no servidor...**', ephemeral=True)
-        MySQLConnector = mysql_connection.MySQLConnector()
-        id_server = ctx.guild.id
-        # procura o servidor na base de dados
-        resultado = await MySQLConnector.procurar_servidor(id_server)
-        if resultado:
-            try:
-                for member in ctx.guild.members:
-                    if not member.guild_permissions.administrator:
-                        # retira timeout dos membros do servidor
-                        await member.timeout(None, reason=None)
-                # altera os status do servidor para liberado
-                await MySQLConnector.alterar_quarentena(id_server, 'liberado')
-                await ctx.send('**Servidor liberado.**', ephemeral=True)
-            except:
-                await ctx.send('Ocorreu algum erro durante o comando. Informe o dono da aplicação.', ephemeral=True)
-        else:
-            await ctx.send('Servidor não encontrado na base de dados. Informe o dono da aplicação.', ephemeral=True)
-
     # Apague um número determinado de mensagens
     @commands.hybrid_command(name='apagar', description='Apague mensagens do servidor.')
-    @app_commands.default_permissions(administrator=True)
+    @app_commands.default_permissions(manage_messages=True)
+    @commands.cooldown(5, 60, commands.BucketType.member) # Limita o uso de 5 comandos para cada 1 min
     @commands.guild_only()
     async def apagar(self, ctx, quantidade: int):
 
@@ -140,34 +116,64 @@ class Moderacao(commands.Cog):
             numero += 1
 
     # Escolhe o canal de boas vindas
-    @commands.hybrid_command(name='canal_de_boas_vindas', description='Escolhe um canal de texto para ser o canal de boas-vindas.')
+    @commands.hybrid_command(name='canal_de_entrada', description='Escolhe um canal de boas-vindas no servidor.')
     @commands.guild_only()
+    @commands.cooldown(10, 60, commands.BucketType.guild) # Limita o uso de 10 comandos para cada 1 min
     @app_commands.default_permissions(administrator=True)
     async def escolher_canal_boas_vindas(self, ctx, canal: discord.TextChannel):
 
-        MySQLConnector = mysql_connection.MySQLConnector()
-        await MySQLConnector.escolher_canal_de_boas_vindas(ctx.guild.id, canal)
-        await ctx.send(f'Canal de boas-vindas escolhido.', ephemeral=True)
+        consulta = 'SELECT * FROM canal_de_boas_vindas WHERE fk_id_servidor = %s'
+        cursor_user.execute(consulta, (ctx.guild.id,))
+        resultado = cursor_user.fetchone()
+        if resultado:
+            alterar = 'UPDATE canal_de_boas_vindas SET id = %s, updated_at = %s WHERE fk_id_servidor = %s'
+            cursor_user.execute(alterar, (canal.id, datetime.now(), ctx.guild.id, ))
+            cnx_user.commit()
+        else:
+            inserir = 'INSERT INTO canal_de_boas_vindas VALUES(%s,%s, %s, %s)'
+            cursor_user.execute(inserir, (canal.id, ctx.guild.id, datetime.now(), None, ))
+            cnx_user.commit()
+        await ctx.send(f'Canal de entrada escolhido.', ephemeral=True)
 
     # Escolher cargo de boas vindas
-    @commands.hybrid_command(name='cargo_de_boas_vindas', description='Escolhe um cargo que o membro irá ganhar ao entrar no servidor.')
+    @commands.hybrid_command(name='cargo_de_entrada', description='Escolhe um cargo de entrada no servidor.')
     @commands.guild_only()
+    @commands.cooldown(10, 60, commands.BucketType.guild) # Limita o uso de 10 comandos para cada 1 min
     @app_commands.default_permissions(administrator=True)
     async def escolher_cargo_boas_vindas(self, ctx, cargo: discord.Role):
 
-        MySQLConnector = mysql_connection.MySQLConnector()
-        await MySQLConnector.inserir_cargo(cargo, ctx.guild.id)
-        await ctx.send(f'Cargo de boas-vindas escolhido.', ephemeral=True)
+        pesquisar = 'SELECT * FROM cargo_de_boas_vindas WHERE fk_id_servidor = %s'
+        cursor_user.execute(pesquisar, (ctx.guild.id,))
+        resultado = cursor_user.fetchone()
+        if resultado:
+            alterar = 'UPDATE cargo_de_boas_vindas SET id = %s, updated_at = %s WHERE fk_id_servidor = %s'
+            cursor_user.execute(alterar, (cargo.id, datetime.now(), ctx.guild.id, ))
+            cnx_user.commit()
+        else:
+            inserir = 'INSERT INTO cargo_de_boas_vindas VALUES(%s, %s, %s, %s)'
+            cursor_user.execute(inserir, (cargo.id, ctx.guild.id, datetime.now(), None, ))
+            cnx_user.commit()
+        await ctx.send(f'Cargo de entrada escolhido.', ephemeral=True)
 
     # Escolher canal de membros que saiu do servidor
-    @commands.hybrid_command(name='canal_membros_removidos', description='Escolhe um canal de texto para notificação quando um membro sair do servidor.')
+    @commands.hybrid_command(name='canal_de_saida', description='Escolhe um canal de saída no servidor.')
     @commands.guild_only()
+    @commands.cooldown(10, 60, commands.BucketType.guild) # Limita o uso de 10 comandos para cada 1 min
     @app_commands.default_permissions(administrator=True)
     async def escolher_canal_membros_removidos(self, ctx, canal: discord.TextChannel):
 
-        MySQLConnector = mysql_connection.MySQLConnector()
-        await MySQLConnector.escolher_canal_removidos(canal, ctx.guild.id)
-        await ctx.send(f'Canal de membros removidos escolhido.', ephemeral=True)
+        pesquisar = 'SELECT * FROM canal_de_membros_removidos WHERE fk_id_servidor = %s'
+        cursor_user.execute(pesquisar, (ctx.guild.id,))
+        resultado = cursor_user.fetchone()
+        if resultado:
+            alterar = 'UPDATE canal_de_membros_removidos SET id = %s, updated_at = %s WHERE fk_id_servidor = %s'
+            cursor_user.execute(alterar, (canal.id, datetime.now(), ctx.guild.id,))
+            cnx_user.commit()
+        else:
+            inserir = 'INSERT INTO canal_de_membros_removidos VALUES(%s, %s, %s, %s)'
+            cursor_user.execute(inserir, (canal.id, ctx.guild.id, datetime.now(), None,))
+            cnx_user.commit()
+        await ctx.send(f'Canal de saída escolhido.', ephemeral=True)
 
     # Comando usado para apagar mensagens privadas do bot
     @commands.hybrid_command(name='apagar_dm', description='Apague mensagens privadas do ATLAS.')

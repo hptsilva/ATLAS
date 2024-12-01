@@ -7,14 +7,21 @@ from datetime import datetime
 
 COLOR = int(config('COLOR'))
 
+connection = mysql_connection.MySQLConnector
+cnx_user, cursor_user = connection.conectar_user()
+cnx_admin, cursor_admin = connection.conectar_admin()
+
 class Notificar():
 
     async def notificar_evento(client):
 
         print('- Task de notificação de eventos iniciada!')
+        # iniciar um loop infinito que verifica os eventos ativos a serem notificados
         while True:
-            MySQLConnector = mysql_connection.MySQLConnector()
-            eventos = await MySQLConnector.pesquisar_eventos()
+
+            pesquisar = 'SELECT * FROM eventos WHERE notificado = %s'
+            cursor_user.execute(pesquisar, ('NÃO', ))
+            eventos = cursor_user.fetchall()
             for evento in eventos:
                 if (evento[3] == 'NÃO'):
                     try:
@@ -22,7 +29,9 @@ class Notificar():
                         mensagem = await canal_de_texto.fetch_message(int(evento[0]))
                     except discord.NotFound as e:
                         # Se a mensagem ou o canal de texto não forem encontrados o dado é apagado do banco de dados
-                        await MySQLConnector.excluir_evento(evento[0])
+                        excluir = 'DELETE FROM eventos WHERE id = %s'
+                        cursor_admin.execute(excluir, (evento[0], ))
+                        cnx_admin.commit()
                         continue
                     except discord.HTTPException as e:
                         continue
@@ -60,6 +69,8 @@ class Notificar():
                                 await asyncio.sleep(0.1)
                             except:
                                 continue
-                        await MySQLConnector.alterar_evento(evento[0])
-            await asyncio.sleep(30)
+                        alterar = 'UPDATE eventos set notificado = %s, updated_at = %s WHERE id = %s'
+                        cursor_user.execute(alterar, ('SIM', datetime.now(), evento[0], ))
+                        cnx_user.commit()
+            await asyncio.sleep(10)
 

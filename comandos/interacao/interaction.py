@@ -2,11 +2,9 @@ import discord
 import random
 import requests
 from discord.ext import commands
-from mysql_connection import MySQLConnector
 from decouple import config
 
 COLOR = int(config('COLOR'))
-ICON_URL = config('ICON_URL')
 
 class Interacao(commands.Cog):
 
@@ -27,6 +25,7 @@ class Interacao(commands.Cog):
 
     # Comando usado para mostrar a foto do perfil de um usuário
     @commands.hybrid_command(name='avatar', description='Veja a foto de perfil de um membro do servidor.')
+    @commands.cooldown(10, 120, commands.BucketType.member)
     async def avatar(self, ctx, usuario: discord.User = None):
 
         if usuario is None:
@@ -36,11 +35,12 @@ class Interacao(commands.Cog):
         embed.set_image(url=avatar_url)
         display_name = usuario.display_name
         embed.set_author(name=display_name,
-                        icon_url=ICON_URL)
+                        icon_url="https://cdn.discordapp.com/attachments/1302022249389363210/1302022403605659720/warning.png?ex=6741a11b&is=67404f9b&hm=b938c823f51bb59036433b7549074f0d6667a5f580d28e9bae169707427f5d0e&")
         await ctx.send(embed=embed)
 
     # Gera um número aletório de 1 até o valor especificado pelo usuário
     @commands.hybrid_command(name='aleatorio', description='Gere um número aleatório de 1 até o valor especificado.')
+    @commands.cooldown(50, 60, commands.BucketType.member)
     async def aleatorio(self, ctx, valor: int):
 
         if(valor < 0):
@@ -51,6 +51,7 @@ class Interacao(commands.Cog):
 
     # Comando para ajudar a usar o comando de eventos
     @commands.hybrid_command(name='timezone', description='Zonas de tempo disponíveis para o comando /evento.')
+    @commands.cooldown(50, 60, commands.BucketType.member)
     @commands.guild_only()
     async def ajuda_evento(self, ctx):
 
@@ -64,17 +65,21 @@ class Interacao(commands.Cog):
         await ctx.send(embed=embed, ephemeral=True)
 
     # Cria um convite para o servidor
-    @commands.hybrid_command(name='convite', description='Crie um convite. O convite irá expirar depois de 10 min após a criação.')
+    @commands.hybrid_command(name='convite', description='Crie um convite.')
     @commands.guild_only()
-    @commands.cooldown(7, 60, commands.BucketType.member) # Limita o uso do comando para 7 usos a cada 60 segundos
-    async def criar_convite(self, ctx):
+    @commands.cooldown(10, 60, commands.BucketType.member) # Limita o uso do comando para 7 usos a cada 60 segundos
+    async def criar_convite(self, ctx, segundos: int = None):
 
         channel = ctx.channel
-        invite = await channel.create_invite(max_age=600, max_uses=1, reason=f'Convite criado por {ctx.author.name} usando o comando /convite.')
+        if segundos == None:
+            invite = await channel.create_invite(max_age=1800, max_uses=1, reason=f'Convite criado por {ctx.author.name} usando o comando /convite.')
+        else:
+            invite = await channel.create_invite(max_age=f'{segundos}', max_uses=1, reason=f'Convite criado por {ctx.author.name} usando o comando /convite.')
         await ctx.send(f'Convite criado: {invite.url}', ephemeral=True)
 
     #Latencia do bot
     @commands.hybrid_command(name='ping', description='Latência da aplicação.')
+    @commands.cooldown(10, 120, commands.BucketType.member)
     @commands.cooldown(5, 60, commands.BucketType.member) # Limita o uso do comando para 5 usos a cada 60 segundos
     async def ping(self, ctx):
 
