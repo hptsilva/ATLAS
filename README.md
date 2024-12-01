@@ -17,17 +17,15 @@
   $ cd discord.py
   $ python3 -m pip install -U .[voice]
 ```
-# Comandos:
+# Comandos possíveis:
 
-* Lista da maioria dos comandos do bot:  
-![comandos](https://github.com/user-attachments/assets/caa44c05-7e08-4628-889a-09872d9e5376)
 * /avatar  
-![avatar](https://github.com/hptsilva/ATLAS-DISCORD-BOT/assets/41704578/cdc2f988-8361-4b1f-98b8-6314ca9acb9c)
+![image](https://github.com/user-attachments/assets/e3da74ff-653a-48af-95c0-ed80eda289e2)
 * /evento  
-![evento](https://github.com/user-attachments/assets/a0646983-12e9-49b3-9c7e-96d5288fc639)
-* (Modelo da mensagem para um evento)  
+![image](https://github.com/user-attachments/assets/bf1b7552-ba94-48b1-8b32-3fe3a6e4a01c)
+* (Modelo da mensagem do evento)  
 ![Captura de tela de 2024-11-19 17-47-34](https://github.com/user-attachments/assets/9b0feec2-1033-44a4-89f6-21ad03ab00cd)
-* (Janela para editar a mensagem)  
+* (Janela para editar o evento)  
 ![editar-evento](https://github.com/user-attachments/assets/5d6306e1-3893-4d70-86a2-2c12606b09cc)
 * Mensagem de boas-vindas  
 ![boas vindas](https://github.com/user-attachments/assets/7e5db295-7013-4731-afe4-99db37baec08)
