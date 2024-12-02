@@ -36,7 +36,7 @@ class Exception_events(commands.Cog):
         guild = ctx.guild
         command = ctx.command
         author = ctx.author
-        guild_id = guild.id if command else None
+        guild_id = guild.id if guild else None
         command_name = command.name if command else None
         author_id = author.id if author else None
         cnx_admin, cursor_admin = MySQLConnector.conectar_admin()
