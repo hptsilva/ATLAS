@@ -73,8 +73,11 @@ class Interacao(commands.Cog):
         channel = ctx.channel
         if segundos == None:
             invite = await channel.create_invite(max_age=1800, max_uses=1, reason=f'Convite criado por {ctx.author.name} usando o comando /convite.')
-        else:
+        elif (segundos >= 0 and segundos <= 604800):
             invite = await channel.create_invite(max_age=f'{segundos}', max_uses=1, reason=f'Convite criado por {ctx.author.name} usando o comando /convite.')
+        else:
+            await ctx.send('**Tempo em segundos inválido.**', ephemeral=True)
+            return
         await ctx.send(f'Convite criado: {invite.url}', ephemeral=True)
 
     #Latencia do bot

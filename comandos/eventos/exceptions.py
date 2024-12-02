@@ -1,9 +1,10 @@
 from datetime import datetime
-import mysql_connection
 from discord.ext import commands
 from discord import RateLimited, NotFound
 from discord.errors import NotFound
 from discord.ext.commands.errors import MissingPermissions, CommandNotFound, MissingRequiredArgument, CommandOnCooldown, NotOwner, BotMissingPermissions, CheckAnyFailure, MissingPermissions, NoPrivateMessage, PrivateMessageOnly
+from mysql_connection import MySQLConnector
+
 
 class Exception_events(commands.Cog):
     def __init__(self, bot):
@@ -38,12 +39,11 @@ class Exception_events(commands.Cog):
         guild_id = guild.id if command else None
         command_name = command.name if command else None
         author_id = author.id if author else None
-        MySQLConnector = mysql_connection.MySQLConnector()
-        cnx_admin, cursor_admin = await MySQLConnector.conectar_admin()
+        cnx_admin, cursor_admin = MySQLConnector.conectar_admin()
         inserir = 'INSERT INTO exceptions VALUES(%s, %s, %s, %s, %s)'
         cursor_admin.execute(inserir, (str(error), str(guild_id), str(author_id), str(command), datetime.now(), ))
         cnx_admin.commit()
-        await MySQLConnector.desconectar_admin(cnx_admin)
+        MySQLConnector.desconectar_admin(cnx_admin)
 
 async def setup(bot):
     await bot.add_cog(Exception_events(bot))

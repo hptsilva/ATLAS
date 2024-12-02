@@ -21,7 +21,7 @@ class MySQLConnector:
         cursor_user = cnx_user.cursor()
         cnx_user._open_connection()
         return cnx_user, cursor_user
-    
+
     # Conexão com o banco de dados
     def conectar_admin():
 
