@@ -76,7 +76,7 @@ class Moderacao(commands.Cog):
             await ctx.send('**O usuário alvo possui um cargo superior ou o ATLAS não tem as permissões necessárias.**', ephemeral=True)
             return
         nome = membro.display_name
-        await ctx.send(f'{nome} saiu do castigo.')
+        await ctx.send(f'{nome} saiu do castigo.', ephemeral=True)
 
     # Excluir todos os convites do servidor
     @commands.hybrid_command(name='excluir_convites', description = 'Exclui todos os convites ativos do servidor.')
@@ -94,12 +94,12 @@ class Moderacao(commands.Cog):
                 await self.bot.delete_invite(invite)
             await ctx.send('Convite(s) excluído(s) com sucesso.', ephemeral=True)
         else:
-            await ctx.send('Não existem convites ativos no servidor.', ephemeral=True)
+            await ctx.send('**Não existem convites ativos no servidor.**', ephemeral=True)
 
     # Apague um número determinado de mensagens
     @commands.hybrid_command(name='apagar', description='Apague mensagens do servidor.')
     @app_commands.default_permissions(manage_messages=True)
-    @commands.cooldown(5, 60, commands.BucketType.member) # Limita o uso de 5 comandos para cada 1 min
+    @commands.cooldown(1, 60, commands.BucketType.member) # Limita o uso de 5 comandos para cada 1 min
     @commands.guild_only()
     async def apagar(self, ctx, quantidade: int):
 
@@ -111,9 +111,11 @@ class Moderacao(commands.Cog):
         while numero <= quantidade:
             mensagem = await ctx.channel.purge(limit=1)
             if mensagem == []:
+                await ctx.send('Concluído.', ephemeral=True)
                 return
-            await asyncio.sleep(0.35)
+            await asyncio.sleep(1.5)
             numero += 1
+        await ctx.send('Concluído.', ephemeral=True)
 
     # Escolhe o canal de boas vindas
     @commands.hybrid_command(name='canal_de_entrada', description='Escolhe um canal de boas-vindas no servidor.')
@@ -185,7 +187,7 @@ class Moderacao(commands.Cog):
         await ctx.send('Pesquisando mensagens...', ephemeral=True)
         messages = [message async for message in member_obj.history(limit=None)]
         if messages == []:
-            await ctx.send('Não existem mensagens do ATLAS na sua dm.', ephemeral=True)
+            await ctx.send('**Não existem mensagens do ATLAS na sua dm.**', ephemeral=True)
             return
         for message in messages:
             try:

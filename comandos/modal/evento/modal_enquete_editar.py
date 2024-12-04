@@ -28,14 +28,14 @@ class Modal_Enquete_Editar(discord.ui.Modal, title = 'Editar Evento'):
                                      placeholder='Descrição do Evento. Digite {apagar} para limpar o campo.',
                                      required=False, style=discord.TextStyle.paragraph)
     url_imagem = discord.ui.TextInput(label='URL da imagem:',
-                                      placeholder='URL da imagem do Evento.',
+                                      placeholder='Exemplo: https://subdominio.dominio/uri',
                                       required=False, style=discord.TextStyle.short)
 
     async def on_submit(self, interaction: discord.Interaction):
 
         message = interaction.message
         if self.titulo.value == '' and self.descricao.value == '' and self.url_imagem.value == '' and self.fuso_horario.value == '' and self.data_horario.value == '':
-            await interaction.response.send_message('Nenhum dado foi inserido no formulário.', ephemeral=True)
+            await interaction.response.send_message('**Nenhum dado foi inserido no formulário.**', ephemeral=True)
             return
         embed_antigo = message.embeds[0]
         campo_sim = embed_antigo.fields[1]
@@ -71,19 +71,19 @@ class Modal_Enquete_Editar(discord.ui.Modal, title = 'Editar Evento'):
                     if (segundos_depois - segundos_agora) > 0:
                         embed.timestamp = start_time
                     else:
-                        await interaction.response.send_message('Não é possível criar um evento com data e hora no passado.', ephemeral=True)
+                        await interaction.response.send_message('**Não é possível criar um evento com data e hora no passado.**', ephemeral=True)
                         return
                 except Exception:
-                    await interaction.response.send_message(f'Zona de tempo inválida.', ephemeral=True)
+                    await interaction.response.send_message(f'**Zona de tempo inválida.**', ephemeral=True)
                     return
             else:
-                await interaction.response.send_message('A data não está no formato correto (hh:mm aaaa-mm-dd) ou não é válida.', ephemeral=True)
+                await interaction.response.send_message('**A data não está no formato correto (hh:mm aaaa-mm-dd) ou não é válida.**', ephemeral=True)
                 return
         elif (self.fuso_horario.value != '' and self.data_horario.value == ''):
-            await interaction.response.send_message('Preencha também o campo Horário e Data.', ephemeral=True)
+            await interaction.response.send_message('**Preencha também o campo Horário e Data.**', ephemeral=True)
             return
         elif (self.fuso_horario.value == '' and self.data_horario.value != ''):
-            await interaction.response.send_message('Preencha também o campo Zona de Tempo.', ephemeral=True)
+            await interaction.response.send_message('**Preencha também o campo Zona de Tempo.**', ephemeral=True)
             return
         else:
             embed.timestamp = embed_antigo.timestamp
@@ -101,4 +101,4 @@ class Modal_Enquete_Editar(discord.ui.Modal, title = 'Editar Evento'):
         try:
             await interaction.response.edit_message(content='@everyone', embed=embed, allowed_mentions = discord.AllowedMentions(everyone=True, users=True))
         except:
-            await interaction.response.send_message('Não foi possível alterar o evento.', ephemeral=True)
+            await interaction.response.send_message('**Não foi possível alterar o evento.**', ephemeral=True)

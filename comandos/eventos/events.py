@@ -10,8 +10,6 @@ from datetime import datetime
 
 # Conexão com o banco de dados
 connection = mysql_connection.MySQLConnector
-cnx_user, cursor_user = connection.conectar_user()
-cnx_admin, cursor_admin = connection.conectar_admin()
 
 COLOR = int(config('COLOR'))
 
@@ -41,9 +39,12 @@ class Eventos(commands.Cog):
     async def on_guild_join(self, guild):
 
         # Verifica se o servidor está na base de dados
+        cnx_user, cursor_user = connection.conectar_user()
         consulta = 'SELECT * FROM servidor WHERE id = %s'
         cursor_user.execute(consulta, (guild.id,))
         resultado = cursor_user.fetchone()
+        connection.desconectar_user(cnx_user)
+        cnx_admin, cursor_admin = connection.conectar_admin()
         if resultado:
             update_server = 'UPDATE servidor SET nome_servidor = %s, updated_at = %s WHERE id = %s'
             cursor_admin.execute(update_server, (guild.name, datetime.now(), guild.id,))
@@ -53,27 +54,28 @@ class Eventos(commands.Cog):
             inserir_server = 'INSERT INTO servidor VALUES(%s, %s, %s, %s, %s, %s)'
             cursor_admin.execute(inserir_server,(guild.id, guild.name, 'Não','liberado', datetime.now(), None))
             cnx_admin.commit()
+        connection.desconectar_admin(cnx_admin)
 
     # Evento ativado quando ocorre alteração no servidor (como nome do servidor, por exemplo)
     @commands.Cog.listener()
     async def on_guild_update(self, before, after):
 
-        MySQLConnector = mysql_connection.MySQLConnector()
+        cnx_admin, cursor_admin = connection.conectar_admin()
         name_server = after.name
         if (name_server is not before.name):
             # altera o dado name_server caso o nome do servidor mude
             update_server = 'UPDATE servidor SET nome_servidor = %s, updated_at = %s WHERE id = %s'
             cursor_admin.execute(update_server, (name_server, datetime.now(), before.id,))
             cnx_admin.commit()
+        connection.desconectar_admin(cnx_admin)
 
     # Evento ativado quando um usuário entrar no servidor
     @commands.Cog.listener()
     async def on_member_join(self, member):
 
-        MySQLConnector = mysql_connection.MySQLConnector()
+        cnx_user, cursor_user = connection.conectar_user()
         id_server = member.guild.id
         # Verifica se o servidor possue um canal de entrada cadastrado, se sim, envia a mensagem por ele. Se não nenhuma mensagem de aviso é enviada.
-        resultado = await MySQLConnector.procurar_canal_boas_vindas(id_server)
         consulta = 'SELECT * FROM canal_de_boas_vindas WHERE fk_id_servidor = %s'
         cursor_user.execute(consulta, (id_server,))
         resultado = cursor_user.fetchone()
@@ -103,18 +105,21 @@ class Eventos(commands.Cog):
                     role = member.guild.get_role(int(resultado[0]))
                     await member.add_roles(role)
                 except:
+                    connection.desconectar_user(cnx_user)
                     return
+            connection.desconectar_user(cnx_user)
 
     # Evento ativado quando um membro sai do servidor.
     @commands.Cog.listener()
     async def on_raw_member_remove(self, payload):
 
-        MySQLConnector = mysql_connection.MySQLConnector()
+        cnx_user, cursor_user = connection.conectar_user()
         id_server = payload.guild_id
         member = payload.user
         pesquisar = 'SELECT * FROM canal_de_membros_removidos WHERE fk_id_servidor = %s'
         cursor_user.execute(pesquisar, (id_server,))
         resultado = cursor_user.fetchone()
+        connection.desconectar_user(cnx_user)
         if resultado:
             avatar_url = member.avatar.url if member.avatar else member.default_avatar.url
             embed = discord.Embed(
@@ -136,10 +141,11 @@ class Eventos(commands.Cog):
         if message.author.id == self.bot.application_id and message.components != []:
             channel = message.channel
             guild = message.guild
-            MySQLConnector = mysql_connection.MySQLConnector()
+            cnx_user, cursor_user = connection.conectar_user()
             inserir = 'INSERT INTO views VALUES(%s, %s, %s, %s, %s)'
             cursor_user.execute(inserir, (message.id, guild.id, channel.id, datetime.now(), None, ))
             cnx_user.commit()
+            connection.desconectar_user(cnx_user)
 
     @commands.Cog.listener()
     async def on_interaction(self, interaction):
@@ -151,13 +157,14 @@ class Eventos(commands.Cog):
         except:
             return
         if (bot_id == self.BOT_ID and name):
-            MySQLConnector = mysql_connection.MySQLConnector()
+            cnx_admin, cursor_admin = connection.conectar_admin()
             pesquisar = 'SELECT * FROM comandos_usos WHERE comando = %s'
             cursor_admin.execute(pesquisar, (name, ))
             quantidade = cursor_admin.fetchone()
             alterar = 'UPDATE comandos_usos SET quantidade = %s WHERE comando = %s'
             cursor_admin.execute(alterar, (quantidade[1] + 1, name, ))
             cnx_admin.commit()
+            connection.desconectar_admin(cnx_admin)
 
 async def setup(bot):
     await bot.add_cog(Eventos(bot))

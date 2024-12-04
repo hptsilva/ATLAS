@@ -10,7 +10,6 @@ connection = mysql_connection.MySQLConnector
 cnx_user, cursor_user = connection.conectar_user()
 cnx_admin, cursor_admin = connection.conectar_admin()
 
-
 class Refresh():
 
     async def refresh_views(client):
@@ -53,5 +52,7 @@ class Refresh():
             button.label = label_notifacao_button
             button.style = estilo_notificacao_button
             await mensagem.edit(view=view)
+        connection.desconectar_user(cnx_user)
+        connection.desconectar_admin(cnx_admin)
         print('- Views resetadas com sucesso!')
 

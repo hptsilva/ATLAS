@@ -22,7 +22,6 @@ class Interacao(commands.Cog):
             # Lida com o erro, por exemplo, levanta uma exceção
             raise Exception(f"Erro ao obter imagem da URL. Código de status: {response.status_code}")
 
-
     # Comando usado para mostrar a foto do perfil de um usuário
     @commands.hybrid_command(name='avatar', description='Veja a foto de perfil de um membro do servidor.')
     @commands.cooldown(10, 120, commands.BucketType.member)
@@ -44,7 +43,7 @@ class Interacao(commands.Cog):
     async def aleatorio(self, ctx, valor: int):
 
         if(valor < 0):
-            await ctx.send(f'Digite um valor maior ou igual a 1', ephemeral=True)
+            await ctx.send(f'**Digite um valor inteiro positivo.**', ephemeral=True)
             return
         numero = random.randint(1, valor)
         await ctx.send(f'O valor gerado é: {numero}.')
@@ -72,9 +71,9 @@ class Interacao(commands.Cog):
 
         channel = ctx.channel
         if segundos == None:
-            invite = await channel.create_invite(max_age=1800, max_uses=1, reason=f'Convite criado por {ctx.author.name} usando o comando /convite.')
+            invite = await channel.create_invite(max_age=1800, max_uses=1, reason=f'Convite criado por {ctx.author.name}.')
         elif (segundos >= 0 and segundos <= 604800):
-            invite = await channel.create_invite(max_age=f'{segundos}', max_uses=1, reason=f'Convite criado por {ctx.author.name} usando o comando /convite.')
+            invite = await channel.create_invite(max_age=f'{segundos}', max_uses=1, reason=f'Convite criado por {ctx.author.name}.')
         else:
             await ctx.send('**Tempo em segundos inválido.**', ephemeral=True)
             return

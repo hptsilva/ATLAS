@@ -10,7 +10,6 @@ DB_ATLAS_USER_PASSWORD=config('DB_ATLAS_USER_PASSWORD')
 
 class MySQLConnector:
 
-
     # Conexão com o banco de dados
     def conectar_user():
 

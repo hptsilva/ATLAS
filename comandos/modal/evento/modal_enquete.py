@@ -31,12 +31,15 @@ class Modal_Enquete(discord.ui.Modal, title='Criar Evento'):
                                      required=False,
                                      style=discord.TextStyle.paragraph)
     url_imagem = discord.ui.TextInput(label='URL da imagem (Opcional):',
-                                      placeholder='URL da imagem para o Evento',
+                                      placeholder='Exemplo: https://subdominio.dominio/uri',
                                       required=False,
                                       style=discord.TextStyle.short)
 
     async def on_submit(self, interaction: discord.Interaction):
 
+        if self.titulo.value == '' or self.data_horario.value == '' or self.fuso_horario.value == '':
+            await interaction.response.send_message('**Preencha todos os campos obrigatórios.**', ephemeral=True)
+            return
         titulo = self.titulo.value
         data_horario = self.data_horario.value
         fuso_horario = self.fuso_horario.value
@@ -55,10 +58,10 @@ class Modal_Enquete(discord.ui.Modal, title='Criar Evento'):
                 if (segundos_depois - segundos_agora) > 0:
                     pass
                 else:
-                    await interaction.response.send_message('Não é possível criar um evento com data e hora no passado.', ephemeral=True)
+                    await interaction.response.send_message('**Não é possível criar um evento com data e hora no passado.**', ephemeral=True)
                     return
             except Exception:
-                await interaction.response.send_message(f'Zona de tempo inválida.', ephemeral=True)
+                await interaction.response.send_message('**Zona de tempo inválida.**', ephemeral=True)
                 return
             if descricao == '':
                 embed = discord.Embed(title=f'{titulo}',
@@ -73,12 +76,7 @@ class Modal_Enquete(discord.ui.Modal, title='Criar Evento'):
             embed.add_field(name='🟥 Não:', value=f'', inline=True)
             embed.add_field(name='🟦 Talvez:', value=f'', inline=True)
             if url_da_imagem != '':
-                try:
-                    image_url = url_da_imagem
-                    embed.set_image(url=image_url)
-                except:
-                    await interaction.response.send_message('Não foi possível inserir a imagem. Tente novamente.', ephemeral=True)
-                    return
+                embed.set_image(url=url_da_imagem)
             embed.set_footer(text=f'Evento criado por {interaction.user.display_name}',
                              icon_url='https://cdn.discordapp.com/attachments/1302022249389363210/1302022403605659720/warning.png?ex=6741a11b&is=67404f9b&hm=b938c823f51bb59036433b7549074f0d6667a5f580d28e9bae169707427f5d0e&',
             )
@@ -86,6 +84,6 @@ class Modal_Enquete(discord.ui.Modal, title='Criar Evento'):
             try:
                 await interaction.response.send_message(content='@everyone',embed=embed, view=view, allowed_mentions = discord.AllowedMentions(everyone=True, users=True))
             except:
-                await interaction.response.send_message('Não foi possível criar o evento.', ephemeral=True)
+                await interaction.response.send_message('**Não foi possível criar o evento.**', ephemeral=True)
         else:
-            await interaction.response.send_message('A data não está no formato correto (hh:mm aaaa-mm-dd) ou não é válida.', ephemeral=True)
+            await interaction.response.send_message('**A data não está no formato correto (hh:mm aaaa-mm-dd) ou não é válida.**', ephemeral=True)
